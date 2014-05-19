@@ -118,15 +118,85 @@ namespace HPHP
         return res == 0?true:false;
     }
 
+    static int64_t HHVM_METHOD(EventBase, getFeatures)
+    {
+        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
+
+        if (var.isNull()) {
+            return -1;
+        }
+
+        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+
+        return event_base_get_features((struct event_base *) EBResource->getInternalResource());
+    }
+
+    static Variant HHVM_METHOD(EventBase, getMethod)
+    {
+        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
+
+        if (var.isNull()) {
+            return null_variant;
+        }
+
+        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+
+        String ret((char *) event_base_get_method((struct event_base *) EBResource->getInternalResource()));
+        return ret;
+    }
+
+    static Variant HHVM_METHOD(EventBase, getTimeOfDayCached)
+    {
+        struct timeval tv;
+        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
+
+        if (var.isNull()) {
+            return null_variant;
+        }
+
+        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+        event_base_gettimeofday_cached((struct event_base *) EBResource->getInternalResource(), &tv);
+        return (double) TIMEVAL_TO_DOUBLE(tv);
+    }
+
+    static bool HHVM_METHOD(EventBase, gotExit)
+    {
+        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
+
+        if (var.isNull()) {
+            return false;
+        }
+
+        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+        return event_base_got_exit((struct event_base *) EBResource->getInternalResource()) != 0;
+    }
+
+    static bool HHVM_METHOD(EventBase, gotStop)
+    {
+        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
+
+        if (var.isNull()) {
+            return false;
+        }
+
+        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+        return event_base_got_break((struct event_base *) EBResource->getInternalResource()) != 0;
+    }
+
     void eventExtension::_initEventBaseClass()
     {
         HHVM_ME(EventBase, __construct);
         HHVM_ME(EventBase, __destruct);
         HHVM_ME(EventBase, dispatch);
         HHVM_ME(EventBase, loopexit);
+        HHVM_ME(EventBase, getFeatures);
+        HHVM_ME(EventBase, getMethod);
+        HHVM_ME(EventBase, getTimeOfDayCached);
+        HHVM_ME(EventBase, gotExit);
+        HHVM_ME(EventBase, gotStop);
+        HHVM_ME(EventBase, loop);
         HHVM_ME(EventBase, priorityInit);
         HHVM_ME(EventBase, reInit);
         HHVM_ME(EventBase, stop);
-        HHVM_ME(EventBase, loop);
     }
 }
