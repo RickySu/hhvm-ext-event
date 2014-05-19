@@ -1,6 +1,10 @@
-#ifndef INCLUDE_HPHP_EXT_EVENT_H_
-#define INCLUDE_HPHP_EXT_EVENT_H_
+#ifndef EXT_EVENT_H_
+#define EXT_EVENT_H_
+
+#include <event2/event.h>
 #include "hphp/runtime/base/base-includes.h"
+#include "resource/InternalResource.h"
+#include "resource/EventBaseResource.h"
 
 namespace HPHP
 {
