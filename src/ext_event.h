@@ -5,6 +5,7 @@
 #include "hphp/runtime/base/base-includes.h"
 #include "resource/InternalResource.h"
 #include "resource/EventBaseResource.h"
+#include "util.h"
 
 namespace HPHP
 {
