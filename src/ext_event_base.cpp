@@ -37,10 +37,23 @@ namespace HPHP
         event_base_dispatch((struct event_base *) EBResource->getInternalResource());
     }
 
+    static bool HHVM_METHOD(EventBase, priorityInit, int64_t prio)
+    {
+        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
+
+        if (var.isNull()) {
+            return false;
+        }
+
+        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+        return event_base_priority_init((struct event_base *) EBResource->getInternalResource(), prio) == 0 ?true:false;
+    }
+
     void eventExtension::_initEventBaseClass()
     {
         HHVM_ME(EventBase, __construct);
         HHVM_ME(EventBase, __destruct);
         HHVM_ME(EventBase, dispatch);
+        HHVM_ME(EventBase, priorityInit);
     }
 }
