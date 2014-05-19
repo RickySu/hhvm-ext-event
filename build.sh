@@ -11,7 +11,8 @@ tail -q -n +2 src/*php src/types/*php src/exceptions/*php >> ext_event.php
 
 
 
-$HPHP_HOME/hphp/tools/hphpize/hphpize
+CMAKE_MODULE_PATH="./CMake" $HPHP_HOME/hphp/tools/hphpize/hphpize
+
 cmake .
 make
 

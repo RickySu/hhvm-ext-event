@@ -11,11 +11,13 @@
 #include <event2/event.h>
 #include "InternalResource.h"
 
+typedef struct event_base event_base_t;
+
 namespace HPHP {
 
     class EventBaseResource : public InternalResource {
     public:
-        EventBaseResource(struct event_base *event_base);
+        EventBaseResource(event_base_t *event_base);
         virtual ~EventBaseResource();
     private:
 

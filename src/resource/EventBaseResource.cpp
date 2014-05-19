@@ -9,11 +9,10 @@
 
 namespace HPHP {
 
-    EventBaseResource::EventBaseResource(struct event_base *event_base):InternalResource((void*) event_base) {
+    EventBaseResource::EventBaseResource(event_base_t *event_base):InternalResource((void*) event_base) {
     }
 
     EventBaseResource::~EventBaseResource() {
-        event_base_free((struct event_base *) getInternalResource());
     }
 
 }
