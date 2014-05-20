@@ -17,6 +17,6 @@ final class EventBufferEvent
 
     private $__internal_resource;
 
-    <<__Native>> function __construct(EventBase $base, resource $socket = NULL, int $options = 0, callable $readcb = NULL, callable $writecb = NULL, callable $eventcb = NULL, mixed $arg = NULL): void;
-    <<__Native>> function __destruct(): void;
+    <<__Native>> function __construct(EventBase $base, ?resource $socket = NULL, int $options = 0, callable $readcb = NULL, callable $writecb = NULL, callable $eventcb = NULL, mixed $arg = NULL): void;
+    <<__Native>> function free(): void;
 }

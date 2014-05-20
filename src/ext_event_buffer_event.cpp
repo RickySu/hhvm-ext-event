@@ -61,13 +61,13 @@ namespace HPHP {
         }
     }
 
-    static void HHVM_METHOD(EventBufferEvent, __destruct) {
+    static void HHVM_METHOD(EventBufferEvent, free) {
         EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
         bufferevent_free((event_buffer_event_t*) EBEResource->getInternalResource());
     }
 
     void eventExtension::_initEventBufferEventClass() {
         HHVM_ME(EventBufferEvent, __construct);
-        HHVM_ME(EventBufferEvent, __destruct);
+        HHVM_ME(EventBufferEvent, free);
     }
 }

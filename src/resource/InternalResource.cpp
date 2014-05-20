@@ -8,13 +8,10 @@
 #include "InternalResource.h"
 
 namespace HPHP {
+    IMPLEMENT_OBJECT_ALLOCATION(InternalResource)
 
     InternalResource::InternalResource(void *resource) {
         this->resource = resource;
-    }
-
-    void InternalResource::sweep() {
-        delete this;
     }
 
     void * InternalResource::getInternalResource() {
