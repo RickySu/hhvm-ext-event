@@ -5,7 +5,7 @@ final class EventConfig
     const integer FEATURE_O1 = 2;
     const integer FEATURE_FDS = 4;
 
-    private $__event_config;
+    private $__internal_resource;
 
     <<__Native>> function __construct(): void;
     <<__Native>> function __destruct(): void;

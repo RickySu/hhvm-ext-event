@@ -8,8 +8,8 @@ class EventBase
     const NO_CACHE_TIME = 8 ;
     const EPOLL_USE_CHANGELIST = 16 ;
 
-    private $__event_base;
-    
+    private $__internal_resource;
+
     <<__Native>> function __construct(?EventConfig $cb = NULL): void;
     <<__Native>> function __destruct(): void;
     <<__Native>> function dispatch(): void;

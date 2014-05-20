@@ -9,44 +9,26 @@ namespace HPHP {
             resource = Resource(NEWOBJ(EventBaseResource(event_base_new())));
         } else {
             printf("event_base_new_with_config\n");
-            auto var = config->o_get(s_event_config, true, s_eventconfig.get());
-            resource = Resource(NEWOBJ(EventBaseResource(event_base_new_with_config((event_config_t *) var.asCResRef().getTyped<EventConfigResource>()->getInternalResource()))));
+            resource = Resource(NEWOBJ(EventBaseResource(event_base_new_with_config((event_config_t *) FETCH_RESOURCE(config, EventConfigResource, s_eventconfig)->getInternalResource()))));
         }
-        this_->o_set(s_event_base, resource, s_eventbase.get());
+        SET_RESOURCE(this_, resource, s_eventbase);
     }
 
     static void HHVM_METHOD(EventBase, __destruct) {
-        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
-
-        if (var.isNull()) {
-            return;
-        }
-
-        delete var.asCResRef().getTyped<EventBaseResource>();
+        delete FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
         printf("release\n");
     }
 
     static void HHVM_METHOD(EventBase, dispatch) {
-        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
-
-        if (var.isNull()) {
-            return;
-        }
-
-        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+        EventBaseResource *EBResource = FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
         event_base_dispatch((event_base_t *) EBResource->getInternalResource());
     }
 
     static bool HHVM_METHOD(EventBase, loopexit, double timeout) {
         int res;
         struct timeval tv;
-        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
 
-        if (var.isNull()) {
-            return false;
-        }
-
-        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+        EventBaseResource *EBResource = FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
 
         printf("timeout = %lf\n", timeout);
 
@@ -60,48 +42,24 @@ namespace HPHP {
     }
 
     static bool HHVM_METHOD(EventBase, priorityInit, int64_t prio) {
-        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
-
-        if (var.isNull()) {
-            return false;
-        }
-
-        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+        EventBaseResource *EBResource = FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
         return event_base_priority_init((event_base_t *) EBResource->getInternalResource(), prio) == 0 ? true : false;
     }
 
     static bool HHVM_METHOD(EventBase, reInit) {
-        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
-
-        if (var.isNull()) {
-            return false;
-        }
-
-        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+        EventBaseResource *EBResource = FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
         return event_reinit((event_base_t *) EBResource->getInternalResource()) == 0 ? true : false;
     }
 
     static bool HHVM_METHOD(EventBase, stop) {
-        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
-
-        if (var.isNull()) {
-            return false;
-        }
-
-        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+        EventBaseResource *EBResource = FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
         return event_base_loopbreak((event_base_t *) EBResource->getInternalResource()) == 0 ? true : false;
     }
 
     static bool HHVM_METHOD(EventBase, loop, int64_t flags) {
         int res;
 
-        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
-
-        if (var.isNull()) {
-            return false;
-        }
-
-        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+        EventBaseResource *EBResource = FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
 
         if (flags == 0) {
             res = event_base_dispatch((event_base_t *) EBResource->getInternalResource());
@@ -112,62 +70,30 @@ namespace HPHP {
     }
 
     static int64_t HHVM_METHOD(EventBase, getFeatures) {
-        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
-
-        if (var.isNull()) {
-            return -1;
-        }
-
-        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
-
+        EventBaseResource *EBResource = FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
         return event_base_get_features((event_base_t *) EBResource->getInternalResource());
     }
 
     static Variant HHVM_METHOD(EventBase, getMethod) {
-        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
-
-        if (var.isNull()) {
-            return null_variant;
-        }
-
-        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
-
+        EventBaseResource *EBResource = FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
         String ret((char *) event_base_get_method((event_base_t *) EBResource->getInternalResource()));
         return ret;
     }
 
     static Variant HHVM_METHOD(EventBase, getTimeOfDayCached) {
         struct timeval tv;
-        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
-
-        if (var.isNull()) {
-            return null_variant;
-        }
-
-        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+        EventBaseResource *EBResource = FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
         event_base_gettimeofday_cached((event_base_t *) EBResource->getInternalResource(), &tv);
         return (double) TIMEVAL_TO_DOUBLE(tv);
     }
 
     static bool HHVM_METHOD(EventBase, gotExit) {
-        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
-
-        if (var.isNull()) {
-            return false;
-        }
-
-        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+        EventBaseResource *EBResource = FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
         return event_base_got_exit((event_base_t *) EBResource->getInternalResource()) != 0;
     }
 
     static bool HHVM_METHOD(EventBase, gotStop) {
-        auto var = this_->o_get(s_event_base, true, s_eventbase.get());
-
-        if (var.isNull()) {
-            return false;
-        }
-
-        EventBaseResource *EBResource = var.asCResRef().getTyped<EventBaseResource>();
+        EventBaseResource *EBResource = FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
         return event_base_got_break((event_base_t *) EBResource->getInternalResource()) != 0;
     }
 
