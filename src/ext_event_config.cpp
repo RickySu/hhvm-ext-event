@@ -48,6 +48,7 @@ namespace HPHP
     
     static void HHVM_METHOD(EventConfig, setMaxDispatchInterval, double max_interval, int64_t max_callbacks, int64_t min_priority)
     {
+#ifdef HAVE_DISPATCH_INTERVAL_FUNCTION    
         struct timeval tv;
         auto var = this_->o_get(s_event_config, true, s_eventconfig.get());
 
@@ -64,6 +65,9 @@ namespace HPHP
         else{
             event_config_set_max_dispatch_interval((event_config_t *) ECResource->getInternalResource(), NULL, max_callbacks, min_priority);
         }
+#else
+        throw NotImplementedException("Available since libevent 2.1.0-alpha");
+#endif        
     }
 
     void eventExtension::_initEventConfigClass()

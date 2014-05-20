@@ -1,6 +1,6 @@
 #ifndef EXT_EVENT_H_
 #define EXT_EVENT_H_
-
+#include "../config.h"
 #include <event2/event.h>
 #include <event2/event-config.h>
 #include "hphp/runtime/base/base-includes.h"
