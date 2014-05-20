@@ -1,5 +1,5 @@
 <?hh
-class EventBase
+final class EventBase
 {
     const LOOP_ONCE = 1 ;
     const LOOP_NONBLOCK = 2 ;
@@ -10,7 +10,7 @@ class EventBase
 
     private $__internal_resource;
 
-    <<__Native>> function __construct(?EventConfig $cb = NULL): void;
+    <<__Native>> function __construct(?EventConfig $config = NULL): void;
     <<__Native>> function __destruct(): void;
     <<__Native>> function dispatch(): void;
     <<__Native>> function loopexit(float $timeout = 0.0): bool;

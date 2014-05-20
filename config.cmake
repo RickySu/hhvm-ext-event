@@ -11,9 +11,11 @@ HHVM_EXTENSION(event
     src/resource/InternalResource.cpp
     src/resource/EventBaseResource.cpp
     src/resource/EventConfigResource.cpp
+    src/resource/EventBufferEventResource.cpp
     src/ext_event.cpp
     src/ext_event_base.cpp
     src/ext_event_config.cpp
+    src/ext_event_buffer_event.cpp
 )
 HHVM_SYSTEMLIB(event ext_event.php)
 

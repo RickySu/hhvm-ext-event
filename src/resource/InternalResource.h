@@ -17,7 +17,8 @@ namespace HPHP {
     public:
         InternalResource(void *resource);
         ~InternalResource();
-        void sweep() FOLLY_OVERRIDE;
+        DECLARE_RESOURCE_ALLOCATION(InternalResource)
+        //void sweep() FOLLY_OVERRIDE;
         CLASSNAME_IS("InternalResource")
         virtual const String& o_getClassNameHook() const { return classnameof(); }
         void * getInternalResource();

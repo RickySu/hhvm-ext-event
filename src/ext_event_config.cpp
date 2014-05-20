@@ -11,7 +11,8 @@ namespace HPHP
 
     static void HHVM_METHOD(EventConfig, __destruct)
     {
-        delete FETCH_RESOURCE(this_, EventConfigResource, s_eventconfig);
+        EventConfigResource *ECResource = FETCH_RESOURCE(this_, EventConfigResource, s_eventconfig);
+        event_config_free((event_config_t *) ECResource->getInternalResource());
     }
 
     static bool HHVM_METHOD(EventConfig, avoidMethod, const String& method)

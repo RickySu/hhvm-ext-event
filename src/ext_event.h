@@ -1,12 +1,10 @@
 #ifndef EXT_EVENT_H_
 #define EXT_EVENT_H_
 #include "../config.h"
-#include <event2/event.h>
-#include <event2/event-config.h>
 #include "hphp/runtime/base/base-includes.h"
-#include "resource/InternalResource.h"
 #include "resource/EventBaseResource.h"
 #include "resource/EventConfigResource.h"
+#include "resource/EventBufferEventResource.h"
 #include "util.h"
 #include "common.h"
 
@@ -20,11 +18,13 @@ namespace HPHP
             {
                 _initEventBaseClass();
                 _initEventConfigClass();
+                _initEventBufferEventClass();
                 loadSystemlib();
             }
         private:
             void _initEventBaseClass();
             void _initEventConfigClass();
+            void _initEventBufferEventClass();
     };
 }
 #endif

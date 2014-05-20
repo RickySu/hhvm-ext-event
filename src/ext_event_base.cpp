@@ -1,22 +1,19 @@
 #include "ext_event.h"
-#include <stdio.h>
 namespace HPHP {
 
-    static void HHVM_METHOD(EventBase, __construct, const Object config) {
+    static void HHVM_METHOD(EventBase, __construct, const Object &config) {
         Resource resource;
         if (config.isNull()) {
-            printf("event_base_new\n");
             resource = Resource(NEWOBJ(EventBaseResource(event_base_new())));
         } else {
-            printf("event_base_new_with_config\n");
             resource = Resource(NEWOBJ(EventBaseResource(event_base_new_with_config((event_config_t *) FETCH_RESOURCE(config, EventConfigResource, s_eventconfig)->getInternalResource()))));
         }
         SET_RESOURCE(this_, resource, s_eventbase);
     }
 
     static void HHVM_METHOD(EventBase, __destruct) {
-        delete FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
-        printf("release\n");
+        EventBaseResource *EBResource = FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
+        event_base_free((event_base_t *) EBResource->getInternalResource());
     }
 
     static void HHVM_METHOD(EventBase, dispatch) {
@@ -29,8 +26,6 @@ namespace HPHP {
         struct timeval tv;
 
         EventBaseResource *EBResource = FETCH_RESOURCE(this_, EventBaseResource, s_eventbase);
-
-        printf("timeout = %lf\n", timeout);
 
         if (timeout == 0) {
             res = event_base_loopexit((event_base_t *) EBResource->getInternalResource(), NULL);
