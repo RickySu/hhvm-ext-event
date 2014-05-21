@@ -21,8 +21,11 @@ namespace HPHP {
         CLASSNAME_IS("InternalResource")
         virtual const String& o_getClassNameHook() const { return classnameof(); }
         void * getInternalResource();
+        void setObject(const Object &obj);
+        const Object *getObject();
     private:
         void *resource;
+        const Object *object;
     };
 }
 #endif	/* EVENTBASERESOURCE_H */

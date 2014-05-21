@@ -19,14 +19,6 @@ namespace HPHP {
         this->eventcb = &eventcb;
     }
 
-    void EventBufferEventResource::setObject(const Object *obj) {
-        this->object = obj;
-    }
-
-    const Object *EventBufferEventResource::getObject() {
-        return object;
-    }
-
     void EventBufferEventResource::setArg(const Variant *arg) {
         this->arg = arg;
     }

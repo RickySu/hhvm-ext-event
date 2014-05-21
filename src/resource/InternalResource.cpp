@@ -18,6 +18,14 @@ namespace HPHP {
         return this->resource;
     }
 
+    void InternalResource::setObject(const Object &obj) {
+        this->object = &obj;
+    }
+
+    const Object *InternalResource::getObject() {
+        return object;
+    }
+
     InternalResource::~InternalResource() {
     }
 

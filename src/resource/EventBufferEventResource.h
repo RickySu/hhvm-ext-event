@@ -24,14 +24,11 @@ namespace HPHP {
         const Variant *getReadCB();
         const Variant *getWriteCB();
         const Variant *getEventCB();
-        void setObject(const Object *obj);
-        const Object *getObject();
         void setArg(const Variant *arg);
         const Variant *getArg();
         virtual ~EventBufferEventResource();
     private:
         const Variant *readcb, *writecb, *eventcb, *arg;
-        const Object *object;
     };
 }
 

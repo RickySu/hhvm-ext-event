@@ -5,7 +5,7 @@ namespace HPHP {
     {
         Array param;
         EventBufferEventResource *EBEResource = (EventBufferEventResource *) data;
-        param.append(*EBEResource->getObject());
+        param.append(EBEResource->getObject());
         param.append(*EBEResource->getArg());
         f_call_user_func_array(*EBEResource->getReadCB(), param);
     }
@@ -49,7 +49,6 @@ namespace HPHP {
         EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
 
         EBEResource->setCallback(readcb, writecb, eventcb);
-        EBEResource->setObject(&this_);
         EBEResource->setArg(&eventcb);
 
         read_cb = readcb.isNull()?(bufferevent_data_cb)NULL:bevent_read_cb;
