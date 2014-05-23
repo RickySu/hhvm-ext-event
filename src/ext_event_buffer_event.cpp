@@ -1,60 +1,74 @@
-#include "ext_event.h"
+#include "ext.h"
+#include <stdio.h>      /* printf */
+#include <signal.h>
 namespace HPHP {
 
     static void bevent_read_cb(event_buffer_event_t *bevent, void *data)
     {
         Array param;
-        EventBufferEventResource *EBEResource = (EventBufferEventResource *) data;
+//        EventBufferEventResource *EBEResource = (EventBufferEventResource *) data;
+        /*
         param.append(EBEResource->getObject());
-        param.append(*EBEResource->getArg());
-        f_call_user_func_array(*EBEResource->getReadCB(), param);
+        param.append(*EBEResource->getArg());*/
+        echo("aaa\n");
+        //vm_call_user_func(*EBEResource->getReadCB(), param);
     }
 
     static void bevent_write_cb(event_buffer_event_t *bevent, void *data)
     {
         Array param;
-        EventBufferEventResource *EBEResource = (EventBufferEventResource *) data;
+/*        EventBufferEventResource *EBEResource = (EventBufferEventResource *) data;
         param.append(*EBEResource->getObject());
-        param.append(*EBEResource->getArg());
-        f_call_user_func_array(*EBEResource->getWriteCB(), param);
+        param.append(*EBEResource->getArg());*/
+        echo("bbb\n");
+        //vm_call_user_func(*EBEResource->getWriteCB(), param);
     }
 
     static void bevent_event_cb(event_buffer_event_t *bevent, short events, void *data)
     {
-        Array param;
         EventBufferEventResource *EBEResource = (EventBufferEventResource *) data;
-        param.append(*EBEResource->getObject());
-        param.append(events);
-        param.append(*EBEResource->getArg());
-        f_call_user_func_array(*EBEResource->getEventCB(), param);
+        vm_call_user_func(Object(EBEResource->getEventCB()), make_packed_array(Object(EBEResource->getObjectData()), events, *EBEResource->getArg()));
     }
 
-    static void HHVM_METHOD(EventBufferEvent, __construct, const Object &event_base, const Resource &socket, int64_t options, const Variant &readcb, const Variant &writecb, const Variant &eventcb, const Variant &arg) {
+    static void HHVM_METHOD(EventBufferEvent, __construct, const Object &event_base, const Resource &socket, int64_t options, const Object &readcb, const Object &writecb, const Object &eventcb, const Variant &arg) {
         evutil_socket_t fd;
         event_buffer_event_t *bevent;
         bufferevent_data_cb  read_cb;
         bufferevent_data_cb  write_cb;
         bufferevent_event_cb event_cb;
         Resource resource;
-
-        EventBaseResource *EBResource = FETCH_RESOURCE(event_base, EventBaseResource, s_eventbase);
+        InternalResource *EBResource = FETCH_RESOURCE(event_base, InternalResource, s_eventbase);
+        event_base_t *base = (event_base_t *)EBResource->getInternalResource();
         if(socket.isNull()){
             fd = -1;
             options |= BEV_OPT_CLOSE_ON_FREE;
         }
-        bevent = bufferevent_socket_new((event_base_t *)EBResource->getInternalResource(), fd, options);
-        resource = Resource(NEWOBJ(EventBufferEventResource(bevent)));
+        else{
+            Socket *sock = socket.getTyped<Socket>();
+            fd = sock->fd();
+            if(fd < 0){
+                raise_error("valid PHP socket resource expected");
+            }
+            evutil_make_socket_nonblocking(fd);
+        }
+        bevent = bufferevent_socket_new(base, fd, options);
+        if(bevent == NULL){
+            raise_error("Failed to allocate bufferevent for socket");
+        }
+        resource = Resource(NEWOBJ(EventBufferEventResource(bevent, this_.get())));
         SET_RESOURCE(this_, resource, s_eventbufferevent);
 
         EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
+        readcb.get()->incRefCount();
+        writecb.get()->incRefCount();
+        eventcb.get()->incRefCount();
 
-        EBEResource->setCallback(readcb, writecb, eventcb);
-        EBEResource->setArg(&eventcb);
+        EBEResource->setCallback(readcb.get(), writecb.get(), eventcb.get());
+        EBEResource->setArg(&arg);
 
         read_cb = readcb.isNull()?(bufferevent_data_cb)NULL:bevent_read_cb;
         write_cb = writecb.isNull()?(bufferevent_data_cb)NULL:bevent_write_cb;
         event_cb = eventcb.isNull()?(bufferevent_event_cb)NULL:bevent_event_cb;
-
         if(read_cb || write_cb || event_cb ){
             bufferevent_setcb(bevent, read_cb, write_cb, event_cb, (void *) EBEResource);
         }
@@ -65,8 +79,15 @@ namespace HPHP {
         bufferevent_free((event_buffer_event_t*) EBEResource->getInternalResource());
     }
 
+    static bool HHVM_METHOD(EventBufferEvent, enable, int64_t events) {
+        EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
+        return bufferevent_enable((event_buffer_event_t*) EBEResource->getInternalResource(), events) == 0 ? true:false;
+    }
+
+
     void eventExtension::_initEventBufferEventClass() {
         HHVM_ME(EventBufferEvent, __construct);
         HHVM_ME(EventBufferEvent, free);
+        HHVM_ME(EventBufferEvent, enable);
     }
 }

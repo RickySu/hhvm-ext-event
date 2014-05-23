@@ -13,22 +13,22 @@
 #include <event2/bufferevent.h>
 #include "InternalResource.h"
 
-typedef struct bufferevent event_buffer_event_t;
-
 namespace HPHP {
 
     class EventBufferEventResource : public InternalResource {
     public:
-        EventBufferEventResource(event_buffer_event_t *event_buffer_event);
-        void setCallback(const Variant &readcb, const Variant &writecb, const Variant &eventcb);
-        const Variant *getReadCB();
-        const Variant *getWriteCB();
-        const Variant *getEventCB();
+        EventBufferEventResource(event_buffer_event_t *event_buffer_event, ObjectData *object);
+        void setCallback(ObjectData *readcb, ObjectData *writecb, ObjectData *eventcb);
+        ObjectData *getReadCB();
+        ObjectData *getWriteCB();
+        ObjectData *getEventCB();
         void setArg(const Variant *arg);
         const Variant *getArg();
         virtual ~EventBufferEventResource();
+        ObjectData *getObjectData();
     private:
-        const Variant *readcb, *writecb, *eventcb, *arg;
+        ObjectData *readcb, *writecb, *eventcb, *object;
+        const Variant *arg;
     };
 }
 

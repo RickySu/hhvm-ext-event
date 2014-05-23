@@ -9,14 +9,19 @@
 
 namespace HPHP {
 
-    EventBufferEventResource::EventBufferEventResource(event_buffer_event_t *event_buffer_event):InternalResource((void*) event_buffer_event) {
+    EventBufferEventResource::EventBufferEventResource(event_buffer_event_t *event_buffer_event, ObjectData *object):InternalResource((void*) event_buffer_event) {
+        this->object = object;
     }
 
-    void EventBufferEventResource::setCallback(const Variant &readcb, const Variant &writecb, const Variant &eventcb)
+    ObjectData *EventBufferEventResource::getObjectData(){
+        return this->object;
+    }
+
+    void EventBufferEventResource::setCallback(ObjectData *readcb, ObjectData *writecb, ObjectData *eventcb)
     {
-        this->readcb = &readcb;
-        this->writecb = &writecb;
-        this->eventcb = &eventcb;
+        this->readcb = readcb;
+        this->writecb = writecb;
+        this->eventcb = eventcb;
     }
 
     void EventBufferEventResource::setArg(const Variant *arg) {
@@ -27,17 +32,17 @@ namespace HPHP {
         return arg;
     }
 
-    const Variant* EventBufferEventResource::getReadCB()
+    ObjectData* EventBufferEventResource::getReadCB()
     {
         return readcb;
     }
 
-    const Variant* EventBufferEventResource::getWriteCB()
+    ObjectData* EventBufferEventResource::getWriteCB()
     {
         return writecb;
     }
 
-    const Variant* EventBufferEventResource::getEventCB()
+    ObjectData* EventBufferEventResource::getEventCB()
     {
         return eventcb;
     }

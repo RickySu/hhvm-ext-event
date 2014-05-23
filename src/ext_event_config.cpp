@@ -1,29 +1,29 @@
-#include "ext_event.h"
+#include "ext.h"
 
 namespace HPHP
 {
 
     static void HHVM_METHOD(EventConfig, __construct)
     {
-        Resource resource = Resource(NEWOBJ(EventConfigResource(event_config_new())));
+        Resource resource = Resource(NEWOBJ(InternalResource(event_config_new())));
         SET_RESOURCE(this_, resource, s_eventconfig);
     }
 
     static void HHVM_METHOD(EventConfig, __destruct)
     {
-        EventConfigResource *ECResource = FETCH_RESOURCE(this_, EventConfigResource, s_eventconfig);
+        InternalResource *ECResource = FETCH_RESOURCE(this_, InternalResource, s_eventconfig);
         event_config_free((event_config_t *) ECResource->getInternalResource());
     }
 
     static bool HHVM_METHOD(EventConfig, avoidMethod, const String& method)
     {
-        EventConfigResource *ECResource = FETCH_RESOURCE(this_, EventConfigResource, s_eventconfig);
+        InternalResource *ECResource = FETCH_RESOURCE(this_, InternalResource, s_eventconfig);
         return event_config_avoid_method((event_config_t *) ECResource->getInternalResource(), method.c_str()) == 0?true:false;
     }
 
     static bool HHVM_METHOD(EventConfig, requireFeatures, int64_t feature)
     {
-        EventConfigResource *ECResource = FETCH_RESOURCE(this_, EventConfigResource, s_eventconfig);
+        InternalResource *ECResource = FETCH_RESOURCE(this_, InternalResource, s_eventconfig);
         return event_config_require_features((event_config_t *) ECResource->getInternalResource(), feature) == 0?true:false;
     }
 
@@ -31,7 +31,7 @@ namespace HPHP
     {
 #ifdef HAVE_DISPATCH_INTERVAL_FUNCTION
         struct timeval tv;
-        EventConfigResource *ECResource = FETCH_RESOURCE(this_, EventConfigResource, s_eventconfig);
+        InternalResource *ECResource = FETCH_RESOURCE(this_, InternalResource, s_eventconfig);
 
         TIMEVAL_SET(tv, max_interval);
 

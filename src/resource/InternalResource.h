@@ -11,6 +11,10 @@
 #include "hphp/runtime/base/base-includes.h"
 #include <event2/event.h>
 
+typedef struct event_base event_base_t;
+typedef struct event_config event_config_t;
+typedef struct bufferevent event_buffer_event_t;
+
 namespace HPHP {
 
     class InternalResource : public SweepableResourceData {
