@@ -5,23 +5,14 @@ namespace HPHP {
 
     static void bevent_read_cb(event_buffer_event_t *bevent, void *data)
     {
-        Array param;
-//        EventBufferEventResource *EBEResource = (EventBufferEventResource *) data;
-        /*
-        param.append(EBEResource->getObject());
-        param.append(*EBEResource->getArg());*/
-        echo("aaa\n");
-        //vm_call_user_func(*EBEResource->getReadCB(), param);
+        EventBufferEventResource *EBEResource = (EventBufferEventResource *) data;
+        vm_call_user_func(Object(EBEResource->getReadCB()), make_packed_array(Object(EBEResource->getObjectData()), *EBEResource->getArg()));
     }
 
     static void bevent_write_cb(event_buffer_event_t *bevent, void *data)
     {
-        Array param;
-/*        EventBufferEventResource *EBEResource = (EventBufferEventResource *) data;
-        param.append(*EBEResource->getObject());
-        param.append(*EBEResource->getArg());*/
-        echo("bbb\n");
-        //vm_call_user_func(*EBEResource->getWriteCB(), param);
+        EventBufferEventResource *EBEResource = (EventBufferEventResource *) data;
+        vm_call_user_func(Object(EBEResource->getWriteCB()), make_packed_array(Object(EBEResource->getObjectData()), *EBEResource->getArg()));
     }
 
     static void bevent_event_cb(event_buffer_event_t *bevent, short events, void *data)
