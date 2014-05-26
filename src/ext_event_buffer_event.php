@@ -27,4 +27,6 @@ final class EventBufferEvent
     <<__Native>> function setCallbacks(callable $readcb, callable $writecb, callable $eventcb, mixed $arg = NULL): void;
     <<__Native>> function setPriority(int $priority):bool;
     <<__Native>> function setTimeouts(float $timeout_read, float $timeout_write):bool;
+    <<__Native>> function setWatermark(int $events, int $lowmark, int $highmark):void;
+    <<__Native>> function write(string $data):bool;
 }

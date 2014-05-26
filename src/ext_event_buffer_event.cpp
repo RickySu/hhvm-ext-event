@@ -167,6 +167,16 @@ namespace HPHP {
         return bufferevent_set_timeouts((event_buffer_event_t *) EBEResource->getInternalResource(), &tv_read, &tv_write) == 0?true:false;
     }
 
+    static void HHVM_METHOD(EventBufferEvent, setWatermark, int64_t events, int64_t lowmark, int64_t highmark) {
+        EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
+        bufferevent_setwatermark((event_buffer_event_t *) EBEResource->getInternalResource(), events, lowmark, highmark);
+    }
+
+    static bool HHVM_METHOD(EventBufferEvent, write, const String &data) {
+        EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
+        return bufferevent_write((event_buffer_event_t *) EBEResource->getInternalResource(), data.c_str(), data.size()) == 0?true:false;
+    }
+
     void eventExtension::_initEventBufferEventClass() {
         HHVM_ME(EventBufferEvent, __construct);
         HHVM_ME(EventBufferEvent, connect);
@@ -178,5 +188,7 @@ namespace HPHP {
         HHVM_ME(EventBufferEvent, setCallbacks);
         HHVM_ME(EventBufferEvent, setPriority);
         HHVM_ME(EventBufferEvent, setTimeouts);
+        HHVM_ME(EventBufferEvent, setWatermark);
+        HHVM_ME(EventBufferEvent, write);
     }
 }
