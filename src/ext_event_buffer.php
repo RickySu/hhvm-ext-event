@@ -18,4 +18,6 @@ final class EventBuffer
     <<__Native>> function __construct(): void;
     <<__Native>> function add(string $data): bool;
     <<__Native>> function addBuffer(Eventbuffer $buf): bool;
+    <<__Native>> function appendFrom(Eventbuffer $buf, int $len): int;
+    <<__Native>> function copyout(mixed &$data, int $max_bytes): int;
 }
