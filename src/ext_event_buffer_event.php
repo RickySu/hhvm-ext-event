@@ -24,6 +24,7 @@ final class EventBufferEvent
     <<__Native>> function getEnabled(): int;
     <<__Native>> function free(): void;
     <<__Native>> function read(int $size): mixed;
-    <<__Native>> function setPriority(int $priority):bool;
     <<__Native>> function setCallbacks(callable $readcb, callable $writecb, callable $eventcb, mixed $arg = NULL): void;
+    <<__Native>> function setPriority(int $priority):bool;
+    <<__Native>> function setTimeouts(float $timeout_read, float $timeout_write):bool;
 }

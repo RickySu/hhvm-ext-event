@@ -158,6 +158,15 @@ namespace HPHP {
         setCB(EBEResource, readcb, writecb, eventcb, arg);
     }
 
+    static bool HHVM_METHOD(EventBufferEvent, setTimeouts, double timeout_read, double timeout_write) {
+        EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
+        struct timeval tv_read;
+        struct timeval tv_write;
+        TIMEVAL_SET(tv_read, timeout_read);
+        TIMEVAL_SET(tv_write, timeout_write);
+        return bufferevent_set_timeouts((event_buffer_event_t *) EBEResource->getInternalResource(), &tv_read, &tv_write) == 0?true:false;
+    }
+
     void eventExtension::_initEventBufferEventClass() {
         HHVM_ME(EventBufferEvent, __construct);
         HHVM_ME(EventBufferEvent, connect);
@@ -168,5 +177,6 @@ namespace HPHP {
         HHVM_ME(EventBufferEvent, read);
         HHVM_ME(EventBufferEvent, setCallbacks);
         HHVM_ME(EventBufferEvent, setPriority);
+        HHVM_ME(EventBufferEvent, setTimeouts);
     }
 }
