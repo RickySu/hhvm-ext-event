@@ -20,5 +20,10 @@ final class EventBufferEvent
     <<__Native>> function __construct(EventBase $base, ?resource $socket = NULL, int $options = 0, callable $readcb = NULL, callable $writecb = NULL, callable $eventcb = NULL, mixed $arg = NULL): void;
     <<__Native>> function connect(string $addr): bool;
     <<__Native>> function enable(int $events): bool;
+    <<__Native>> function disable(int $events): bool;
+    <<__Native>> function getEnabled(): int;
     <<__Native>> function free(): void;
+    <<__Native>> function read(int $size): mixed;
+    <<__Native>> function setPriority(int $priority):bool;
+    <<__Native>> function setCallbacks(callable $readcb, callable $writecb, callable $eventcb, mixed $arg = NULL): void;
 }
