@@ -14,6 +14,7 @@
 typedef struct event_base event_base_t;
 typedef struct event_config event_config_t;
 typedef struct bufferevent event_buffer_event_t;
+typedef struct evbuffer event_buffer_t;
 
 namespace HPHP {
 

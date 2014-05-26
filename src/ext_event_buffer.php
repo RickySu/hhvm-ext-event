@@ -16,4 +16,6 @@ final class EventBuffer
     private $__internal_resource;
 
     <<__Native>> function __construct(): void;
+    <<__Native>> function add(string $data): bool;
+    <<__Native>> function addBuffer(Eventbuffer $buf): bool;
 }
