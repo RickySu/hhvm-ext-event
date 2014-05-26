@@ -20,6 +20,7 @@ HHVM_EXTENSION(event
     src/ext_event_base.cpp
     src/ext_event_config.cpp
     src/ext_event_buffer_event.cpp
+    src/ext_event_buffer.cpp
     src/ext_event.cpp
 )
 HHVM_SYSTEMLIB(event ext_event.php)

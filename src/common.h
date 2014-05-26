@@ -10,7 +10,8 @@ namespace HPHP
         s_internal_resource("__internal_resource"),
         s_eventbase("EventBase"),
         s_eventconfig("EventConfig"),
-        s_eventbufferevent("EventBufferEvent")
+        s_eventbufferevent("EventBufferEvent"),
+        s_eventbuffer("EventBuffer")
     ;
 }
 #endif	/* COMMON_H */

@@ -8,6 +8,10 @@
 #include "resource/EventBufferEventResource.h"
 #include "util.h"
 #include "common.h"
+#include <event2/event.h>
+#include <event2/util.h>
+#include <event2/bufferevent.h>
+#include <event2/buffer.h>
 #include <event2/thread.h>
 
 namespace HPHP
@@ -22,6 +26,7 @@ namespace HPHP
                 _initEventBaseClass();
                 _initEventConfigClass();
                 _initEventBufferEventClass();
+                _initEventBufferClass();
                 _initEventClass();
                 loadSystemlib();
             }
@@ -29,6 +34,7 @@ namespace HPHP
             void _initEventBaseClass();
             void _initEventConfigClass();
             void _initEventBufferEventClass();
+            void _initEventBufferClass();
             void _initEventClass();
     };
 
