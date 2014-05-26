@@ -10,7 +10,6 @@
 #include "common.h"
 #include <event2/thread.h>
 
-
 namespace HPHP
 {
     class eventExtension: public Extension

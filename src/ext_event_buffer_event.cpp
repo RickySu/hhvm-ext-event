@@ -1,6 +1,8 @@
 #include "ext.h"
-#include <stdio.h>      /* printf */
-#include <signal.h>
+#ifdef HAVE_SYS_UN_H
+    #include <sys/un.h>
+#endif
+
 namespace HPHP {
 
     static void bevent_read_cb(event_buffer_event_t *bevent, void *data)
@@ -68,6 +70,15 @@ namespace HPHP {
     static void HHVM_METHOD(EventBufferEvent, free) {
         EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
         bufferevent_free((event_buffer_event_t*) EBEResource->getInternalResource());
+        if(EBEResource->getReadCB()!=NULL){
+            EBEResource->getReadCB()->decRefCount();
+        }
+        if(EBEResource->getWriteCB()!=NULL){
+            EBEResource->getWriteCB()->decRefCount();
+        }
+        if(EBEResource->getEventCB()!=NULL){
+            EBEResource->getEventCB()->decRefCount();
+        }
     }
 
     static bool HHVM_METHOD(EventBufferEvent, enable, int64_t events) {
@@ -75,9 +86,34 @@ namespace HPHP {
         return bufferevent_enable((event_buffer_event_t*) EBEResource->getInternalResource(), events) == 0 ? true:false;
     }
 
+    static bool HHVM_METHOD(EventBufferEvent, connect, const String &addr) {
+        struct sockaddr_storage  ss;
+        int ss_len   = sizeof(ss);
+        memset(&ss, 0, sizeof(ss));
+        EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
+
+#ifdef HAVE_SYS_UN_H
+        if(strncasecmp(addr.get()->data(), s_domain_socket_prefix.get()->data(), s_domain_socket_prefix.size())){
+            struct sockaddr_un *ss_un;
+            ss_un = (struct sockaddr_un *) ss_un;
+            ss_un->sun_family = AF_UNIX;
+            ss_len = sizeof(struct sockaddr_un);
+            strncpy(ss_un->sun_path, &addr.get()->data()[s_domain_socket_prefix.size()], UNIX_PATH_MAX);
+        }
+        else
+#endif
+        if(true){
+            if (evutil_parse_sockaddr_port(addr.get()->data(), (struct sockaddr *) &ss, &ss_len) == -1) {
+                return false;
+            }
+        }
+
+        return bufferevent_socket_connect((event_buffer_event_t *) EBEResource->getInternalResource(), (struct sockaddr *) &ss, ss_len) == 0?true:false;
+    }
 
     void eventExtension::_initEventBufferEventClass() {
         HHVM_ME(EventBufferEvent, __construct);
+        HHVM_ME(EventBufferEvent, connect);
         HHVM_ME(EventBufferEvent, free);
         HHVM_ME(EventBufferEvent, enable);
     }
