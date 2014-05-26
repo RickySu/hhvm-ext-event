@@ -54,4 +54,5 @@ namespace HPHP
         HHVM_ME(EventConfig, requireFeatures);
         HHVM_ME(EventConfig, setMaxDispatchInterval);
     }
+
 }

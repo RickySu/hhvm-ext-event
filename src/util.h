@@ -14,9 +14,8 @@
     if(__var__get.isNull()) raise_error("resource is invalid."); \
     __var__get.asCResRef().getTyped<resource_class>(); \
     })
- #define SET_RESOURCE(obj, resource, ctx) \
+#define SET_RESOURCE(obj, resource, ctx) \
     obj->o_set(s_internal_resource, resource, ctx); \
     resource.getTyped<InternalResource>()->setObject(obj);
-
 #endif	/* UTIL_H */
 

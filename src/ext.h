@@ -31,5 +31,16 @@ namespace HPHP
             void _initEventBufferEventClass();
             void _initEventClass();
     };
+
+    inline Object makeObject(String &ClassName){
+        Object ret = ObjectData::newInstance(Unit::lookupClass(ClassName.get()));
+        return ret;
+    }
+
+    inline Object makeObject(const char *ClassName){
+        Object ret = ObjectData::newInstance(Unit::lookupClass(StringData::Make(ClassName)));
+        return ret;
+    }
+
 }
 #endif
