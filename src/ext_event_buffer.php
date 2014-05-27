@@ -28,4 +28,7 @@ final class EventBuffer
     <<__Native>> function prepend(string $data): bool;
     <<__Native>> function prependBuffer(Eventbuffer $buf): bool;
     <<__Native>> function pullup(int $size): string;
+    <<__Native>> function read(int $max_bytes): string;
+    <<__Native>> function readFrom(resource $fd, int $howmuch): mixed;
+    <<__Native>> function readLine(int $eol_style): string;
 }
