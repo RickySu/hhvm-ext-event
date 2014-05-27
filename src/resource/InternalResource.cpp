@@ -9,7 +9,6 @@
 
 namespace HPHP {
     IMPLEMENT_OBJECT_ALLOCATION(InternalResource)
-
     InternalResource::InternalResource(void *resource) {
         this->resource = resource;
     }
@@ -18,6 +17,9 @@ namespace HPHP {
         return this->resource;
     }
 
+    void InternalResource::setInternalResource(void *resource) {
+        this->resource = resource;
+    }
     void InternalResource::setObject(const Object &obj) {
         this->object = &obj;
     }

@@ -8,7 +8,8 @@
 #include "EventBufferEventResource.h"
 
 namespace HPHP {
-
+    IMPLEMENT_OBJECT_ALLOCATION(EventBufferEventResource)
+    
     EventBufferEventResource::EventBufferEventResource(event_buffer_event_t *event_buffer_event, ObjectData *object):InternalResource((void*) event_buffer_event) {
         this->object = object;
     }

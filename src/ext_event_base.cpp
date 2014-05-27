@@ -80,11 +80,13 @@ namespace HPHP {
         return ret;
     }
 
-    static Variant HHVM_METHOD(EventBase, getTimeOfDayCached) {
+    static double HHVM_METHOD(EventBase, getTimeOfDayCached) {
         struct timeval tv;
+        echo("test\n");
         InternalResource *EBResource = FETCH_RESOURCE(this_, InternalResource, s_eventbase);
+        echo("test123\n");
         event_base_gettimeofday_cached((event_base_t *) EBResource->getInternalResource(), &tv);
-        return (double) TIMEVAL_TO_DOUBLE(tv);
+        return TIMEVAL_TO_DOUBLE(tv);
     }
 
     static bool HHVM_METHOD(EventBase, gotExit) {

@@ -17,14 +17,16 @@ namespace HPHP {
 
     class EventBufferEventResource : public InternalResource {
     public:
+        DECLARE_RESOURCE_ALLOCATION(EventBufferEventResource)
+        CLASSNAME_IS("EventBufferEventResource")
         EventBufferEventResource(event_buffer_event_t *event_buffer_event, ObjectData *object);
+        virtual ~EventBufferEventResource();
         void setCallback(ObjectData *readcb, ObjectData *writecb, ObjectData *eventcb);
         ObjectData *getReadCB();
         ObjectData *getWriteCB();
         ObjectData *getEventCB();
         void setArg(const Variant *arg);
         const Variant *getArg();
-        virtual ~EventBufferEventResource();
         ObjectData *getObjectData();
     private:
         ObjectData *readcb, *writecb, *eventcb, *object;

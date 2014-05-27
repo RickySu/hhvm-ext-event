@@ -42,15 +42,27 @@ namespace HPHP {
         bufferevent_event_cb event_cb;
         EBEResource->setCallback(readcb.get(), writecb.get(), eventcb.get());
         EBEResource->setArg(&arg);
-
-        readcb.get()->incRefCount();
-        writecb.get()->incRefCount();
-        eventcb.get()->incRefCount();
-
-        read_cb = readcb.isNull()?(bufferevent_data_cb)NULL:bevent_read_cb;
-        write_cb = writecb.isNull()?(bufferevent_data_cb)NULL:bevent_write_cb;
-        event_cb = eventcb.isNull()?(bufferevent_event_cb)NULL:bevent_event_cb;
-
+        if(readcb.isNull()){
+            read_cb = (bufferevent_data_cb) NULL;
+        }
+        else {
+            readcb.get()->incRefCount();
+            read_cb = bevent_read_cb;
+        }
+        if(writecb.isNull()){
+            write_cb = (bufferevent_data_cb) NULL;
+        }
+        else {
+            writecb.get()->incRefCount();
+            write_cb = bevent_write_cb;
+        }
+        if(eventcb.isNull()){
+            event_cb = (bufferevent_event_cb) NULL;
+        }
+        else {
+            eventcb.get()->incRefCount();
+            event_cb = bevent_event_cb;
+        }
         if(read_cb || write_cb || event_cb ){
             bufferevent_setcb((event_buffer_event_t*) EBEResource->getInternalResource(), read_cb, write_cb, event_cb, (void *) EBEResource);
         }
@@ -80,14 +92,11 @@ namespace HPHP {
         }
         resource = Resource(NEWOBJ(EventBufferEventResource(bevent, this_.get())));
         SET_RESOURCE(this_, resource, s_eventbufferevent);
-
         EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
         setCB(EBEResource, readcb, writecb, eventcb, arg);
-
         Object inputBuffer = makeObject("EventBuffer");
         Resource inputBufferResource = Resource(NEWOBJ(InternalResource(evbuffer_new())));
         this_->o_set(s_eventbufferevent_input, inputBuffer, s_eventbufferevent);
-
         Object outputBuffer = makeObject("EventBuffer");
         Resource outputBufferResource = Resource(NEWOBJ(InternalResource(evbuffer_new())));
         this_->o_set(s_eventbufferevent_output, outputBuffer, s_eventbufferevent);
@@ -95,7 +104,12 @@ namespace HPHP {
 
     static void HHVM_METHOD(EventBufferEvent, free) {
         EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
-        bufferevent_free((event_buffer_event_t*) EBEResource->getInternalResource());
+        event_buffer_event_t *bev = (event_buffer_event_t*) EBEResource->getInternalResource();
+        if(bev == NULL){
+            raise_error("Failed to free bufferevent resource");
+        }
+        EBEResource->setInternalResource(NULL);
+        bufferevent_free(bev);
         freeCB(EBEResource);
     }
 

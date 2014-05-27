@@ -18,7 +18,7 @@ typedef struct evbuffer event_buffer_t;
 
 namespace HPHP {
 
-    class InternalResource : public SweepableResourceData {
+    class InternalResource: public SweepableResourceData {
     public:
         InternalResource(void *resource);
         ~InternalResource();
@@ -26,6 +26,7 @@ namespace HPHP {
         CLASSNAME_IS("InternalResource")
         virtual const String& o_getClassNameHook() const { return classnameof(); }
         void * getInternalResource();
+        void setInternalResource(void *resource);
         void setObject(const Object &obj);
         const Object *getObject();
     private:
