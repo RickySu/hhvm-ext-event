@@ -2,15 +2,15 @@
 final class Event
 {
 
-    const integer ET = 32 ;
-    const integer PERSIST = 16 ;
-    const integer READ = 2 ;
-    const integer WRITE = 4 ;
-    const integer SIGNAL = 8 ;
-    const integer TIMEOUT = 1 ;
+    const int ET = 32 ;
+    const int PERSIST = 16 ;
+    const int READ = 2 ;
+    const int WRITE = 4 ;
+    const int SIGNAL = 8 ;
+    const int TIMEOUT = 1 ;
 
-    private $__internal_resource;
+    private ?resource $__internal_resource = null;
 
-    <<__Native>> function __construct(object $eventcb): void;
+    <<__Native>> function __construct(callable $eventcb): void;
     <<__Native>> function __destruct(): void;
 }

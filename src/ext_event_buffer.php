@@ -2,18 +2,18 @@
 final class EventBuffer
 {
     /* Constants */
-    const integer EOL_ANY = 0 ;
-    const integer EOL_CRLF = 1 ;
-    const integer EOL_CRLF_STRICT = 2 ;
-    const integer EOL_LF = 3 ;
-    const integer PTR_SET = 0 ;
-    const integer PTR_ADD = 1 ;
+    const int EOL_ANY = 0 ;
+    const int EOL_CRLF = 1 ;
+    const int EOL_CRLF_STRICT = 2 ;
+    const int EOL_LF = 3 ;
+    const int PTR_SET = 0 ;
+    const int PTR_ADD = 1 ;
 
     /* Properties */
     public int $length ;
     public int $contiguous_space ;
 
-    private $__internal_resource;
+    private ?resource $__internal_resource = null;
 
     <<__Native>> function __construct(): void;
     <<__Native>> function add(string $data): bool;

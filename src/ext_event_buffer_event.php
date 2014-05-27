@@ -1,21 +1,24 @@
 <?hh
 final class EventBufferEvent
 {
-    const integer READING = 1 ;
-    const integer WRITING = 2 ;
-    const integer EOF = 16 ;
-    const integer ERROR = 32 ;
-    const integer TIMEOUT = 64 ;
-    const integer CONNECTED = 128 ;
-    const integer OPT_CLOSE_ON_FREE = 1 ;
-    const integer OPT_THREADSAFE = 2 ;
-    const integer OPT_DEFER_CALLBACKS = 4 ;
-    const integer OPT_UNLOCK_CALLBACKS = 8 ;
-    const integer SSL_OPEN = 0 ;
-    const integer SSL_CONNECTING = 1 ;
-    const integer SSL_ACCEPTING = 2 ;
+    const int READING = 1 ;
+    const int WRITING = 2 ;
+    const int EOF = 16 ;
+    const int ERROR = 32 ;
+    const int TIMEOUT = 64 ;
+    const int CONNECTED = 128 ;
+    const int OPT_CLOSE_ON_FREE = 1 ;
+    const int OPT_THREADSAFE = 2 ;
+    const int OPT_DEFER_CALLBACKS = 4 ;
+    const int OPT_UNLOCK_CALLBACKS = 8 ;
+    const int SSL_OPEN = 0 ;
+    const int SSL_CONNECTING = 1 ;
+    const int SSL_ACCEPTING = 2 ;
 
-    private $__internal_resource;
+    private ?resource $__internal_resource = null;
+
+    private ?EventBuffer $input = null;
+    private ?EventBuffer $output = null;
 
     <<__Native>> function __construct(EventBase $base, ?resource $socket = NULL, int $options = 0, callable $readcb = NULL, callable $writecb = NULL, callable $eventcb = NULL, mixed $arg = NULL): void;
     <<__Native>> function connect(string $addr): bool;

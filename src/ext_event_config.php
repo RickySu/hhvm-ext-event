@@ -1,11 +1,11 @@
 <?hh
 final class EventConfig
 {
-    const integer FEATURE_ET = 1;
-    const integer FEATURE_O1 = 2;
-    const integer FEATURE_FDS = 4;
+    const int FEATURE_ET = 1;
+    const int FEATURE_O1 = 2;
+    const int FEATURE_FDS = 4;
 
-    private $__internal_resource;
+    private ?resource $__internal_resource = null;
 
     <<__Native>> function __construct(): void;
     <<__Native>> function __destruct(): void;

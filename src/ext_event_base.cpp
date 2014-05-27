@@ -2,12 +2,12 @@
 
 namespace HPHP {
     using JIT::VMRegAnchor;
-    static void HHVM_METHOD(EventBase, __construct, const Object &config) {
+    static void HHVM_METHOD(EventBase, __construct, const Variant &config) {
         Resource resource;
         if (config.isNull()) {
             resource = Resource(NEWOBJ(InternalResource(event_base_new())));
         } else {
-            resource = Resource(NEWOBJ(InternalResource(event_base_new_with_config((event_config_t *) FETCH_RESOURCE(config, InternalResource, s_eventconfig)->getInternalResource()))));
+            resource = Resource(NEWOBJ(InternalResource(event_base_new_with_config((event_config_t *) FETCH_RESOURCE(config.toObject(), InternalResource, s_eventconfig)->getInternalResource()))));
         }
         SET_RESOURCE(this_, resource, s_eventbase);
     }

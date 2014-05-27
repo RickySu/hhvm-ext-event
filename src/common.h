@@ -11,6 +11,8 @@ namespace HPHP
         s_eventbase("EventBase"),
         s_eventconfig("EventConfig"),
         s_eventbufferevent("EventBufferEvent"),
+        s_eventbufferevent_input("input"),
+        s_eventbufferevent_output("output"),
         s_eventbuffer("EventBuffer")
     ;
 }

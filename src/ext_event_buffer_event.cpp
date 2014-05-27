@@ -83,6 +83,14 @@ namespace HPHP {
 
         EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
         setCB(EBEResource, readcb, writecb, eventcb, arg);
+
+        Object inputBuffer = makeObject("EventBuffer");
+        Resource inputBufferResource = Resource(NEWOBJ(InternalResource(evbuffer_new())));
+        this_->o_set(s_eventbufferevent_input, inputBuffer, s_eventbufferevent);
+
+        Object outputBuffer = makeObject("EventBuffer");
+        Resource outputBufferResource = Resource(NEWOBJ(InternalResource(evbuffer_new())));
+        this_->o_set(s_eventbufferevent_output, outputBuffer, s_eventbufferevent);
     }
 
     static void HHVM_METHOD(EventBufferEvent, free) {

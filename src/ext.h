@@ -38,14 +38,24 @@ namespace HPHP
             void _initEventClass();
     };
 
-    inline Object makeObject(String &ClassName){
+    inline Object makeObject(const String &ClassName, const Array arg){
+        Class* cls = Unit::lookupClass(ClassName.get());
         Object ret = ObjectData::newInstance(Unit::lookupClass(ClassName.get()));
+        TypedValue dummy;
+        g_context->invokeFunc(&dummy, cls->getCtor(), arg, ret.get());
         return ret;
     }
 
+    inline Object makeObject(const String &ClassName){
+        return makeObject(ClassName, Array::Create());
+    }
+
+    inline Object makeObject(const char *ClassName, const Array arg){
+        return makeObject(String(ClassName), arg);
+    }
+
     inline Object makeObject(const char *ClassName){
-        Object ret = ObjectData::newInstance(Unit::lookupClass(StringData::Make(ClassName)));
-        return ret;
+        return makeObject(String(ClassName), Array::Create());
     }
 
 }

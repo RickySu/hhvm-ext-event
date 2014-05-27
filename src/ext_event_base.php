@@ -1,14 +1,14 @@
 <?hh
 final class EventBase
 {
-    const LOOP_ONCE = 1 ;
-    const LOOP_NONBLOCK = 2 ;
-    const NOLOCK = 1 ;
-    const STARTUP_IOCP = 4 ;
-    const NO_CACHE_TIME = 8 ;
-    const EPOLL_USE_CHANGELIST = 16 ;
+    const int LOOP_ONCE = 1 ;
+    const int LOOP_NONBLOCK = 2 ;
+    const int NOLOCK = 1 ;
+    const int STARTUP_IOCP = 4 ;
+    const int NO_CACHE_TIME = 8 ;
+    const int EPOLL_USE_CHANGELIST = 16 ;
 
-    private $__internal_resource;
+    private ?resource $__internal_resource = null;
 
     <<__Native>> function __construct(?EventConfig $config = NULL): void;
     <<__Native>> function __destruct(): void;
