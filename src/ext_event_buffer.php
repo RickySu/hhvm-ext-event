@@ -20,4 +20,9 @@ final class EventBuffer
     <<__Native>> function addBuffer(Eventbuffer $buf): bool;
     <<__Native>> function appendFrom(Eventbuffer $buf, int $len): int;
     <<__Native>> function copyout(mixed &$data, int $max_bytes): int;
+    <<__Native>> function drain(int $len): bool;
+    <<__Native>> function enableLocking(): void;
+    <<__Native>> function expand(int $len): bool;
+    <<__Native>> function freeze(bool $at_front): bool;
+    <<__Native>> function lock(): void;
 }

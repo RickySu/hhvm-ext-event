@@ -37,8 +37,31 @@ namespace HPHP
         tmp_data[max_bytes+1] = 0;
         delete tmp_data;
         return read_size;
+    }
 
+    static bool HHVM_METHOD(EventBuffer, drain, int64_t len) {
+        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        return evbuffer_drain((event_buffer_t *) resource->getInternalResource(), len) == 0?true:false;
+    }
 
+    static void HHVM_METHOD(EventBuffer, enableLocking) {
+        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        evbuffer_enable_locking((event_buffer_t *) resource->getInternalResource(), NULL);
+    }
+
+    static bool HHVM_METHOD(EventBuffer, expand, int64_t len) {
+        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        return evbuffer_expand((event_buffer_t *) resource->getInternalResource(), len) == 0?true:false;
+    }
+
+    static bool HHVM_METHOD(EventBuffer, freeze, bool at_front) {
+        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        return evbuffer_freeze((event_buffer_t *) resource->getInternalResource(), (int)at_front) == 0?true:false;
+    }
+
+    static void HHVM_METHOD(EventBuffer, lock) {
+        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        evbuffer_lock((event_buffer_t *) resource->getInternalResource());
     }
 
     void eventExtension::_initEventBufferClass()
@@ -48,6 +71,11 @@ namespace HPHP
         HHVM_ME(EventBuffer, addBuffer);
         HHVM_ME(EventBuffer, appendFrom);
         HHVM_ME(EventBuffer, copyout);
+        HHVM_ME(EventBuffer, drain);
+        HHVM_ME(EventBuffer, enableLocking);
+        HHVM_ME(EventBuffer, expand);
+        HHVM_ME(EventBuffer, freeze);
+        HHVM_ME(EventBuffer, lock);
     }
 
 }
