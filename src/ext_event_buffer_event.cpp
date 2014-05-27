@@ -67,12 +67,12 @@ namespace HPHP {
         }
     }
 
-    static void HHVM_METHOD(EventBufferEvent, __construct, const Object &event_base, const Resource &socket, int64_t options, const Object &readcb, const Object &writecb, const Object &eventcb, const Variant &arg) {
+    static void HHVM_METHOD(EventBufferEvent, __construct, const Object &base, const Resource &socket, int64_t options, const Object &readcb, const Object &writecb, const Object &eventcb, const Variant &arg) {
         evutil_socket_t fd;
         event_buffer_event_t *bevent;
         Resource resource;
-        InternalResource *EBResource = FETCH_RESOURCE(event_base, InternalResource, s_eventbase);
-        event_base_t *base = (event_base_t *)EBResource->getInternalResource();
+        InternalResource *EBResource = FETCH_RESOURCE(base, InternalResource, s_eventbase);
+        event_base_t *event_base = (event_base_t *)EBResource->getInternalResource();
         if(socket.isNull()){
             fd = -1;
             options |= BEV_OPT_CLOSE_ON_FREE;
@@ -85,7 +85,7 @@ namespace HPHP {
             }
             evutil_make_socket_nonblocking(fd);
         }
-        bevent = bufferevent_socket_new(base, fd, options);
+        bevent = bufferevent_socket_new(event_base, fd, options);
         if(bevent == NULL){
             raise_error("Failed to allocate bufferevent for socket");
         }
@@ -210,6 +210,18 @@ namespace HPHP {
         return bufferevent_read_buffer((event_buffer_event_t *) EBEResource->getInternalResource(), (event_buffer_t *) resource_src->getInternalResource()) == 0;
     }
 
+    static Variant HHVM_STATIC_METHOD(EventBufferEvent, createPair, const Object &base, int64_t options) {
+        event_buffer_event_t *bevent_pair[2];
+        InternalResource *EBResource = FETCH_RESOURCE(base, InternalResource, s_eventbase);
+        event_base_t *event_base = (event_base_t *)EBResource->getInternalResource();
+
+        if(bufferevent_pair_new(event_base, options, bevent_pair)){
+            return false;
+        }
+
+        return make_packed_array(makeObject("EventBufferEvent", make_packed_array(base)), makeObject("EventBufferEvent", make_packed_array(base)));
+    }
+
     void eventExtension::_initEventBufferEventClass() {
         HHVM_ME(EventBufferEvent, __construct);
         HHVM_ME(EventBufferEvent, connect);
@@ -225,5 +237,6 @@ namespace HPHP {
         HHVM_ME(EventBufferEvent, setWatermark);
         HHVM_ME(EventBufferEvent, write);
         HHVM_ME(EventBufferEvent, writeBuffer);
+         HHVM_STATIC_ME(EventBufferEvent, createPair);
     }
 }

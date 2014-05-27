@@ -26,7 +26,7 @@ final class EventBufferEvent
     <<__Native>> function connect(string $addr): bool;
     <<__Native>> function __construct(EventBase $base, ?resource $socket = NULL, int $options = 0, ?callable $readcb = NULL, ?callable $writecb = NULL, ?callable $eventcb = NULL, ?mixed $arg = NULL): void;
     //<<__Native>> connectHost(EventDnsBase $dns_base, string $hostname, int $port, int $family = EventUtil::AF_UNSPEC): bool;
-    //<<__Native>> static createPair(EventBase $base, int $options = 0): array;
+    <<__Native>> static function createPair(EventBase $base, int $options = 0): mixed;
     <<__Native>> function disable(int $events): bool;
     <<__Native>> function enable(int $events): bool;
     <<__Native>> function free(): void;
