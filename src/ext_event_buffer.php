@@ -25,4 +25,7 @@ final class EventBuffer
     <<__Native>> function expand(int $len): bool;
     <<__Native>> function freeze(bool $at_front): bool;
     <<__Native>> function lock(): void;
+    <<__Native>> function prepend(string $data): bool;
+    <<__Native>> function prependBuffer(Eventbuffer $buf): bool;
+    <<__Native>> function pullup(int $size): string;
 }

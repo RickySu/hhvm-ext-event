@@ -64,6 +64,30 @@ namespace HPHP
         evbuffer_lock((event_buffer_t *) resource->getInternalResource());
     }
 
+    static bool HHVM_METHOD(EventBuffer, prepend, const String &data) {
+        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        return evbuffer_prepend((event_buffer_t *) resource->getInternalResource(), data.c_str(), data.size()) == 0?true:false;
+    }
+
+    static bool HHVM_METHOD(EventBuffer, prependBuffer, const Object &buf) {
+        InternalResource *resource_dst = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        InternalResource *resource_src = FETCH_RESOURCE(buf, InternalResource, s_eventbuffer);
+        return evbuffer_prepend_buffer((event_buffer_t *) resource_dst->getInternalResource(), (event_buffer_t *) resource_src->getInternalResource()) == 0?true:false;
+    }
+
+    static String HHVM_METHOD(EventBuffer, pullup, int64_t size) {
+        unsigned char *data;
+        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        if(size < 0){
+            return String();
+        }
+        data = evbuffer_pullup((event_buffer_t *) resource->getInternalResource(), size);
+        if(data == NULL){
+            return String();
+        }
+        return StringData::Make((const char *)data, size, CopyString);
+    }
+
     void eventExtension::_initEventBufferClass()
     {
         HHVM_ME(EventBuffer, __construct);
@@ -76,6 +100,9 @@ namespace HPHP
         HHVM_ME(EventBuffer, expand);
         HHVM_ME(EventBuffer, freeze);
         HHVM_ME(EventBuffer, lock);
+        HHVM_ME(EventBuffer, prepend);
+        HHVM_ME(EventBuffer, prependBuffer);
+        HHVM_ME(EventBuffer, pullup);
     }
 
 }
