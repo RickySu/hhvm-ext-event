@@ -139,7 +139,7 @@ namespace HPHP
         char *res;
 
         InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        res = evbuffer_readln((event_buffer_t *) resource->getInternalResource(), &len, (evbuffer_eol_style)eol_style);
+        res = evbuffer_readln((event_buffer_t *) resource->getInternalResource(), &len, (evbuffer_eol_style) eol_style);
 
         if(!res){
             return String();
@@ -188,6 +188,104 @@ namespace HPHP
         return ptr_res.pos;
     }
 
+    static Variant HHVM_METHOD(EventBuffer, searchEol, int64_t start, int64_t eol_style) {
+        struct evbuffer_ptr ptr_start, ptr_res;
+        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        event_buffer_t *buf = (event_buffer_t *) resource->getInternalResource();
+        if (start != -1 && get_pos(&ptr_start, start, buf) == false) {
+            start = -1;
+        }
+
+        ptr_res = evbuffer_search_eol(buf, (start != -1 ? &ptr_start : NULL), NULL, (evbuffer_eol_style) eol_style);
+
+        if (ptr_res.pos == -1) {
+            return false;
+        }
+
+        return ptr_res.pos;
+    }
+
+    static Variant HHVM_METHOD(EventBuffer, substr, int64_t start, int64_t length) {
+        StringData *data;
+        struct evbuffer_ptr    ptr;
+        typedef struct evbuffer_iovec evbuffer_iovec_t;
+        evbuffer_iovec_t *pv;
+        int64_t n_chunks, n_read = 0, i;
+
+        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        event_buffer_t *buf = (event_buffer_t *) resource->getInternalResource();
+
+        if (get_pos(&ptr, start, buf) == false) {
+            return false;
+        }
+        /* Determine how many chunks we need */
+        n_chunks = evbuffer_peek(buf, length, &ptr, NULL, 0);
+        /* Allocate space for the chunks. */
+        pv = new evbuffer_iovec_t[n_chunks];
+        /* Fill up pv */
+        n_chunks = evbuffer_peek(buf, length, &ptr, pv, n_chunks);
+
+        /* Determine the size of the result string */
+        for (i = 0; i < n_chunks; ++i) {
+                size_t len = pv[i].iov_len;
+
+                if (n_read + len > length) {
+                        len = length - n_read;
+                }
+
+                n_read += len;
+        }
+
+/* Build result string */
+        data = StringData::Make(n_read);
+        data->setSize(n_read);
+        for (n_read = 0, i = 0; i < n_chunks; ++i) {
+                size_t len = pv[i].iov_len;
+                if (n_read + len > length) {
+                        len = length - n_read;
+                }
+                memcpy((void*) &data->data()[n_read], (void*) pv[i].iov_base, len);
+                n_read += len;
+        }
+        delete pv;
+        return data;
+    }
+
+    static bool HHVM_METHOD(EventBuffer, unfreeze, bool at_front) {
+        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        return evbuffer_unfreeze((event_buffer_t *) resource->getInternalResource(), (int)at_front) == 0?true:false;
+    }
+
+    static void HHVM_METHOD(EventBuffer, unlock) {
+        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        evbuffer_unlock((event_buffer_t *) resource->getInternalResource());
+    }
+
+    static Variant HHVM_METHOD(EventBuffer, write, const Resource &fd, int64_t howmuch) {
+        int fd_r;
+        int64_t res;
+        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        event_buffer_t *buf = (event_buffer_t *) resource->getInternalResource();
+        fd_r = resource_to_fd(fd);
+
+        if(fd_r < 0){
+            return false;
+        }
+
+        if (howmuch < 0) {
+            res = evbuffer_write(buf, fd_r);
+        }
+        else{
+            res = evbuffer_write_atmost(buf, fd_r, howmuch);
+        }
+
+        if(res < 0){
+            return false;
+        }
+
+        return res;
+    }
+
     void eventExtension::_initEventBufferClass()
     {
         HHVM_ME(EventBuffer, __construct);
@@ -207,6 +305,11 @@ namespace HPHP
         HHVM_ME(EventBuffer, readFrom);
         HHVM_ME(EventBuffer, readLine);
         HHVM_ME(EventBuffer, search);
+        HHVM_ME(EventBuffer, searchEol);
+        HHVM_ME(EventBuffer, substr);
+        HHVM_ME(EventBuffer, unfreeze);
+        HHVM_ME(EventBuffer, unlock);
+        HHVM_ME(EventBuffer, write);
     }
 
 }

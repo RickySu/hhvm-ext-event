@@ -32,4 +32,9 @@ final class EventBuffer
     <<__Native>> function readFrom(resource $fd, int $howmuch): mixed;
     <<__Native>> function readLine(int $eol_style): string;
     <<__Native>> function search(string $what, int $start = -1, int $end = -1): mixed;
+    <<__Native>> function searchEol(int $start = -1, int $eol_style = EventBuffer::EOL_ANY): mixed;
+    <<__Native>> function substr(int $start, int $length = -1): mixed;
+    <<__Native>> function unfreeze(bool $at_front): bool;
+    <<__Native>> function unlock(): void;
+    <<__Native>> function write(resource $fd, int $howmuch = -1): mixed;
 }
