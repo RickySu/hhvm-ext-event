@@ -102,7 +102,7 @@ namespace HPHP
         return data;
     }
 
-    int resource_to_fd(const Resource &fd){
+    inline int resource_to_fd(const Resource &fd){
         File *file = fd.getTyped<File>();
         if(file->valid()){
             return file->fd();
@@ -148,6 +148,46 @@ namespace HPHP
         return StringData::Make(res, len, CopyString);
     }
 
+    static bool get_pos(struct evbuffer_ptr *out_ptr, const long pos, event_buffer_t *buf) {
+
+        if (pos < 0) {
+                return false;
+        }
+
+        if (evbuffer_ptr_set(buf, out_ptr, pos, EVBUFFER_PTR_SET) == -1) {
+                raise_warning("Failed to set position to %ld", pos);
+                return false;
+        }
+
+        return true;
+    }
+
+    static Variant HHVM_METHOD(EventBuffer, search, const String &what, int64_t start, int64_t end) {
+        struct evbuffer_ptr ptr_start, ptr_end, ptr_res;
+        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        event_buffer_t *buf = (event_buffer_t *) resource->getInternalResource();
+
+        if (start != -1 && get_pos(&ptr_start, start, buf) == false) {
+            start = -1;
+        }
+
+        if (end != -1 && (end > evbuffer_get_length(buf) || get_pos(&ptr_end, end, buf) == false)) {
+            end = -1;
+        }
+
+        if (end != -1) {
+                ptr_res = evbuffer_search_range(buf, what.c_str(), what.size(), (start != -1 ? &ptr_start : NULL), &ptr_end);
+        } else {
+                ptr_res = evbuffer_search(buf, what.c_str(), what.size(), (start != -1 ? &ptr_start : NULL));
+        }
+
+        if (ptr_res.pos == -1){
+            return false;
+        }
+
+        return ptr_res.pos;
+    }
+
     void eventExtension::_initEventBufferClass()
     {
         HHVM_ME(EventBuffer, __construct);
@@ -166,6 +206,7 @@ namespace HPHP
         HHVM_ME(EventBuffer, read);
         HHVM_ME(EventBuffer, readFrom);
         HHVM_ME(EventBuffer, readLine);
+        HHVM_ME(EventBuffer, search);
     }
 
 }

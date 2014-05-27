@@ -31,4 +31,5 @@ final class EventBuffer
     <<__Native>> function read(int $max_bytes): string;
     <<__Native>> function readFrom(resource $fd, int $howmuch): mixed;
     <<__Native>> function readLine(int $eol_style): string;
+    <<__Native>> function search(string $what, int $start = -1, int $end = -1): mixed;
 }
