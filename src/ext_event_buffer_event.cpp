@@ -5,7 +5,6 @@
 
 namespace HPHP {
 
-
     static void bevent_read_cb(event_buffer_event_t *bevent, void *data)
     {
         EventBufferEventResource *EBEResource = (EventBufferEventResource *) data;
@@ -150,7 +149,7 @@ namespace HPHP {
             }
         }
 
-        return bufferevent_socket_connect((event_buffer_event_t *) EBEResource->getInternalResource(), (struct sockaddr *) &ss, ss_len) == 0?true:false;
+        return bufferevent_socket_connect((event_buffer_event_t *) EBEResource->getInternalResource(), (struct sockaddr *) &ss, ss_len) == 0;
     }
 
     static Variant HHVM_METHOD(EventBufferEvent, read, int64_t size) {
@@ -171,7 +170,7 @@ namespace HPHP {
 
     static bool HHVM_METHOD(EventBufferEvent, setPriority, int64_t priority) {
         EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
-        return bufferevent_priority_set((event_buffer_event_t *) EBEResource->getInternalResource(), priority) == 0?true:false;
+        return bufferevent_priority_set((event_buffer_event_t *) EBEResource->getInternalResource(), priority) == 0;
     }
 
     static void HHVM_METHOD(EventBufferEvent, setCallbacks, const Object &readcb, const Object &writecb, const Object &eventcb, const Variant &arg) {
@@ -186,7 +185,7 @@ namespace HPHP {
         struct timeval tv_write;
         TIMEVAL_SET(tv_read, timeout_read);
         TIMEVAL_SET(tv_write, timeout_write);
-        return bufferevent_set_timeouts((event_buffer_event_t *) EBEResource->getInternalResource(), &tv_read, &tv_write) == 0?true:false;
+        return bufferevent_set_timeouts((event_buffer_event_t *) EBEResource->getInternalResource(), &tv_read, &tv_write) == 0;
     }
 
     static void HHVM_METHOD(EventBufferEvent, setWatermark, int64_t events, int64_t lowmark, int64_t highmark) {
@@ -196,7 +195,13 @@ namespace HPHP {
 
     static bool HHVM_METHOD(EventBufferEvent, write, const String &data) {
         EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
-        return bufferevent_write((event_buffer_event_t *) EBEResource->getInternalResource(), data.c_str(), data.size()) == 0?true:false;
+        return bufferevent_write((event_buffer_event_t *) EBEResource->getInternalResource(), data.c_str(), data.size()) == 0;
+    }
+
+    static bool HHVM_METHOD(EventBufferEvent, writeBuffer, const Object &buf) {
+        EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
+        InternalResource *resource_src = FETCH_RESOURCE(buf, InternalResource, s_eventbuffer);
+        return bufferevent_write_buffer((event_buffer_event_t *) EBEResource->getInternalResource(), (event_buffer_t *) resource_src->getInternalResource()) == 0;
     }
 
     void eventExtension::_initEventBufferEventClass() {
@@ -212,5 +217,6 @@ namespace HPHP {
         HHVM_ME(EventBufferEvent, setTimeouts);
         HHVM_ME(EventBufferEvent, setWatermark);
         HHVM_ME(EventBufferEvent, write);
+        HHVM_ME(EventBufferEvent, writeBuffer);
     }
 }
