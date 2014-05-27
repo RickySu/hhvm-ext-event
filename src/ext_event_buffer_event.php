@@ -41,7 +41,7 @@ final class EventBufferEvent
         return $this->output;
     }
     <<__Native>> function read(int $size): mixed;
-    //<<__Native>> function readBuffer(EventBuffer $buf): bool;
+    <<__Native>> function readBuffer(EventBuffer $buf): bool;
     <<__Native>> function setCallbacks(callable $readcb, callable $writecb, callable $eventcb, mixed $arg = NULL): void;
     <<__Native>> function setPriority(int $priority): bool;
     <<__Native>> function setTimeouts(float $timeout_read, float $timeout_write): bool;

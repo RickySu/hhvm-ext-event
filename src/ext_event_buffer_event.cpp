@@ -204,6 +204,12 @@ namespace HPHP {
         return bufferevent_write_buffer((event_buffer_event_t *) EBEResource->getInternalResource(), (event_buffer_t *) resource_src->getInternalResource()) == 0;
     }
 
+    static bool HHVM_METHOD(EventBufferEvent, readBuffer, const Object &buf) {
+        EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
+        InternalResource *resource_src = FETCH_RESOURCE(buf, InternalResource, s_eventbuffer);
+        return bufferevent_read_buffer((event_buffer_event_t *) EBEResource->getInternalResource(), (event_buffer_t *) resource_src->getInternalResource()) == 0;
+    }
+
     void eventExtension::_initEventBufferEventClass() {
         HHVM_ME(EventBufferEvent, __construct);
         HHVM_ME(EventBufferEvent, connect);
@@ -212,6 +218,7 @@ namespace HPHP {
         HHVM_ME(EventBufferEvent, disable);
         HHVM_ME(EventBufferEvent, getEnabled);
         HHVM_ME(EventBufferEvent, read);
+        HHVM_ME(EventBufferEvent, readBuffer);
         HHVM_ME(EventBufferEvent, setCallbacks);
         HHVM_ME(EventBufferEvent, setPriority);
         HHVM_ME(EventBufferEvent, setTimeouts);
