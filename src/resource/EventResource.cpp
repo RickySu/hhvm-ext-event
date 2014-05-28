@@ -9,11 +9,7 @@
 
 namespace HPHP {
 
-    void EventResource::sweep() {
-        delete arg;
-        delete fd;
-        delete this;
-    }
+    IMPLEMENT_OBJECT_ALLOCATION(EventResource)
 
     EventResource::EventResource(event_t *event, ObjectData *object):InternalResource((void*) event) {
         this->object = object;
