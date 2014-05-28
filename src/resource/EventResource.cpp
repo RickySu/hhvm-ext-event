@@ -8,7 +8,12 @@
 #include "EventResource.h"
 
 namespace HPHP {
-    IMPLEMENT_OBJECT_ALLOCATION(EventResource)
+
+    void EventResource::sweep() {
+        delete arg;
+        delete fd;
+        delete this;
+    }
 
     EventResource::EventResource(event_t *event, ObjectData *object):InternalResource((void*) event) {
         this->object = object;
@@ -24,7 +29,7 @@ namespace HPHP {
     }
 
     void EventResource::setArg(const Variant &arg) {
-        this->arg = &arg;
+        this->arg = new Variant(arg);
     }
 
     const Variant &EventResource::getArg() {
@@ -32,7 +37,7 @@ namespace HPHP {
     }
 
     void EventResource::setFd(const Resource &fd) {
-        this->fd = &fd;
+        this->fd = new Resource(fd);
     }
 
     const Resource &EventResource::getFd() {

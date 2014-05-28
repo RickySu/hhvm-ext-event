@@ -67,6 +67,27 @@ namespace HPHP
         EResource->setInternalResource((void*)event);
     }
 
+    static bool HHVM_METHOD(Event, add, double timeout)
+    {
+        EventResource *EResource = FETCH_RESOURCE(this_, EventResource, s_event);
+        int res;
+        struct timeval tv;
+        if(timeout < 0){
+            res = event_add((event_t *) EResource->getInternalResource(), NULL);
+        }
+        else {
+            TIMEVAL_SET(tv, timeout);
+            res = event_add((event_t *) EResource->getInternalResource(), &tv);
+        }
+        return res == 0;
+    }
+
+    static bool HHVM_METHOD(Event, del)
+    {
+        EventResource *EResource = FETCH_RESOURCE(this_, EventResource, s_event);
+        return event_del((event_t *) EResource->getInternalResource()) == 0;
+    }
+
     static void HHVM_METHOD(Event, free)
     {
         EventResource *EResource = FETCH_RESOURCE(this_, EventResource, s_event);
@@ -82,6 +103,8 @@ namespace HPHP
     void eventExtension::_initEventClass()
     {
         HHVM_ME(Event, __construct);
+        HHVM_ME(Event, add);
+        HHVM_ME(Event, del);
         HHVM_ME(Event, free);
     }
 }

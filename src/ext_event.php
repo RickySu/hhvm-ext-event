@@ -12,5 +12,7 @@ final class Event
     private ?resource $__internal_resource = null;
 
     <<__Native>> function __construct(EventBase $base, mixed $fd, int $what, callable $cb, mixed $arg = NULL): void;
+    <<__Native>> function add(float $timeout = -1.0): bool;
+    <<__Native>> function del(): bool;
     <<__Native>> function free(): void;
 }
