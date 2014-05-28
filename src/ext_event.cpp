@@ -18,12 +18,12 @@ namespace HPHP
         vm_call_user_func(Object(EResource->getCallback()), make_packed_array(signum, EResource->getArg()));
     }
 
-    inline void setCB(EventResource *EResource, const Object &callback) {
+    ALWAYS_INLINE void setCB(EventResource *EResource, const Object &callback) {
         EResource->setCallback(callback.get());
         callback.get()->incRefCount();
     }
 
-    inline void freeCB(EventResource *EResource) {
+    ALWAYS_INLINE void freeCB(EventResource *EResource) {
         if(EResource->getCallback() != NULL){
             EResource->getCallback()->decRefCount();
         }

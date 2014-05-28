@@ -23,7 +23,7 @@ namespace HPHP {
         vm_call_user_func(Object(EBEResource->getEventCB()), make_packed_array(Object(EBEResource->getObjectData()), events, EBEResource->getArg()));
     }
 
-    inline void freeCB(EventBufferEventResource *EBEResource) {
+    ALWAYS_INLINE void freeCB(EventBufferEventResource *EBEResource) {
         if(EBEResource->getReadCB()!=NULL){
             EBEResource->getReadCB()->decRefCount();
         }
@@ -35,7 +35,7 @@ namespace HPHP {
         }
     }
 
-    inline void setCB(EventBufferEventResource *EBEResource, const Object &readcb, const Object &writecb, const Object &eventcb) {
+    ALWAYS_INLINE void setCB(EventBufferEventResource *EBEResource, const Object &readcb, const Object &writecb, const Object &eventcb) {
         bufferevent_data_cb  read_cb;
         bufferevent_data_cb  write_cb;
         bufferevent_event_cb event_cb;

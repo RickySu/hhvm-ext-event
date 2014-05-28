@@ -41,7 +41,7 @@ namespace HPHP
             void _initEventUtilClass();
     };
 
-    inline Object makeObject(const String &ClassName, const Array arg){
+    ALWAYS_INLINE Object makeObject(const String &ClassName, const Array arg){
         Class* cls = Unit::lookupClass(ClassName.get());
         Object ret = ObjectData::newInstance(Unit::lookupClass(ClassName.get()));
         TypedValue dummy;
@@ -49,19 +49,19 @@ namespace HPHP
         return ret;
     }
 
-    inline Object makeObject(const String &ClassName){
+    ALWAYS_INLINE Object makeObject(const String &ClassName){
         return makeObject(ClassName, Array::Create());
     }
 
-    inline Object makeObject(const char *ClassName, const Array arg){
+    ALWAYS_INLINE Object makeObject(const char *ClassName, const Array arg){
         return makeObject(String(ClassName), arg);
     }
 
-    inline Object makeObject(const char *ClassName){
+    ALWAYS_INLINE Object makeObject(const char *ClassName){
         return makeObject(String(ClassName), Array::Create());
     }
 
-    inline int resource_to_fd(const Resource &fd){
+    ALWAYS_INLINE int resource_to_fd(const Resource &fd){
         File *file = fd.getTyped<File>();
         if(file->valid()){
             return file->fd();
