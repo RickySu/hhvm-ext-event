@@ -35,12 +35,11 @@ namespace HPHP {
         }
     }
 
-    inline void setCB(EventBufferEventResource *EBEResource, const Object &readcb, const Object &writecb, const Object &eventcb, const Variant &arg) {
+    inline void setCB(EventBufferEventResource *EBEResource, const Object &readcb, const Object &writecb, const Object &eventcb) {
         bufferevent_data_cb  read_cb;
         bufferevent_data_cb  write_cb;
         bufferevent_event_cb event_cb;
         EBEResource->setCallback(readcb.get(), writecb.get(), eventcb.get());
-        EBEResource->setArg(arg);
         if(readcb.isNull()){
             read_cb = (bufferevent_data_cb) NULL;
         }
@@ -92,7 +91,8 @@ namespace HPHP {
         resource = Resource(NEWOBJ(EventBufferEventResource(bevent, this_.get())));
         SET_RESOURCE(this_, resource, s_eventbufferevent);
         EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
-        setCB(EBEResource, readcb, writecb, eventcb, arg);
+        EBEResource->setArg(arg);
+        setCB(EBEResource, readcb, writecb, eventcb);
         Object inputBuffer = makeObject("EventBuffer");
         Resource inputBufferResource = Resource(NEWOBJ(InternalResource(evbuffer_new())));
         this_->o_set(s_eventbufferevent_input, inputBuffer, s_eventbufferevent);
@@ -176,7 +176,8 @@ namespace HPHP {
     static void HHVM_METHOD(EventBufferEvent, setCallbacks, const Object &readcb, const Object &writecb, const Object &eventcb, const Variant &arg) {
         EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
         freeCB(EBEResource);
-        setCB(EBEResource, readcb, writecb, eventcb, arg);
+        EBEResource->setArg(arg);
+        setCB(EBEResource, readcb, writecb, eventcb);
     }
 
     static bool HHVM_METHOD(EventBufferEvent, setTimeouts, double timeout_read, double timeout_write) {

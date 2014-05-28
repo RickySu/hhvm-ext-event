@@ -18,6 +18,17 @@ namespace HPHP
         vm_call_user_func(Object(EResource->getCallback()), make_packed_array(signum, EResource->getArg()));
     }
 
+    inline void setCB(EventResource *EResource, const Object &callback) {
+        EResource->setCallback(callback.get());
+        callback.get()->incRefCount();
+    }
+
+    inline void freeCB(EventResource *EResource) {
+        if(EResource->getCallback() != NULL){
+            EResource->getCallback()->decRefCount();
+        }
+    }
+
     static void HHVM_METHOD(Event, __construct, const Object &base, const Variant &fd, int64_t what, const Object &cb, const Variant & arg) {
         event_callback_fn event_cb_fn;
         evutil_socket_t fd_r;
@@ -51,21 +62,26 @@ namespace HPHP
             EResource->setFd(fd.asCResRef());
         }
         EResource->setArg(arg);
-        EResource->setCallback(cb.get());
-        cb->incRefCount();
+        setCB(EResource, cb);
         event = event_new(event_base, fd_r, what, event_cb_fn, (void *)EResource);
         EResource->setInternalResource((void*)event);
     }
 
-    static void HHVM_METHOD(Event, __destruct)
+    static void HHVM_METHOD(Event, free)
     {
-        //EventResource *ECResource = FETCH_RESOURCE(this_, EventResource, s_eventconfig);
-        //event_config_free((event_config_t *) ECResource->getInternalResource());
+        EventResource *EResource = FETCH_RESOURCE(this_, EventResource, s_event);
+        event_t *event = (event_t *) EResource->getInternalResource();
+        if(event == NULL){
+            raise_error("Failed to free event resource");
+        }
+        EResource->setInternalResource(NULL);
+        event_free(event);
+        freeCB(EResource);
     }
 
     void eventExtension::_initEventClass()
     {
         HHVM_ME(Event, __construct);
-        HHVM_ME(Event, __destruct);
+        HHVM_ME(Event, free);
     }
 }

@@ -12,5 +12,5 @@ final class Event
     private ?resource $__internal_resource = null;
 
     <<__Native>> function __construct(EventBase $base, mixed $fd, int $what, callable $cb, mixed $arg = NULL): void;
-    <<__Native>> function __destruct(): void;
+    <<__Native>> function free(): void;
 }
