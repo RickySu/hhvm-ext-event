@@ -11,5 +11,5 @@ final class EventConfig
     <<__Native>> function __destruct(): void;
     <<__Native>> function avoidMethod(string $method): bool;
     <<__Native>> function requireFeatures(int $feature): bool;
-    <<__Native>> function setMaxDispatchInterval(float $max_interval, int $max_callbacks, int $min_priority): void;
+    <*HAVE_DISPATCH_INTERVAL_FUNCTION*><<__Native>> function setMaxDispatchInterval(float $max_interval, int $max_callbacks, int $min_priority): void;
 }

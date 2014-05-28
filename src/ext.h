@@ -7,13 +7,10 @@
 #include "hphp/runtime/vm/jit/translator-inline.h"
 #include "resource/EventBufferEventResource.h"
 #include "resource/EventResource.h"
-#include "util.h"
-#include "common.h"
-#include <event2/event.h>
-#include <event2/util.h>
-#include <event2/bufferevent.h>
-#include <event2/buffer.h>
-#include <event2/thread.h>
+#include "h/util.h"
+#include "h/common.h"
+#include "h/use_event.h"
+#include "h/use_openssl.h"
 
 namespace HPHP
 {

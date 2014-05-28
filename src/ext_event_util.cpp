@@ -114,6 +114,13 @@ namespace HPHP
 
         return setsockopt(fd, level, optname, opt_ptr, optlen) == 0;
     }
+
+#ifdef OPENSSL_FOUND
+    static bool HHVM_STATIC_METHOD(EventUtil, sslRandPoll){
+        return (bool) RAND_poll();
+    }
+#endif
+    
     void eventExtension::_initEventUtilClass()
     {
         HHVM_STATIC_ME(EventUtil, getLastSocketErrno);
@@ -121,6 +128,9 @@ namespace HPHP
         HHVM_STATIC_ME(EventUtil, getSocketFd);
         HHVM_STATIC_ME(EventUtil, getSocketName);
         HHVM_STATIC_ME(EventUtil, setSocketOption);
+#ifdef OPENSSL_FOUND
+        HHVM_STATIC_ME(EventUtil, sslRandPoll);
+#endif
     }
 
 }
