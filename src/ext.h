@@ -6,6 +6,7 @@
 #include "hphp/runtime/base/thread-info.h"
 #include "hphp/runtime/vm/jit/translator-inline.h"
 #include "resource/EventBufferEventResource.h"
+#include "resource/EventResource.h"
 #include "util.h"
 #include "common.h"
 #include <event2/event.h>
@@ -56,6 +57,18 @@ namespace HPHP
 
     inline Object makeObject(const char *ClassName){
         return makeObject(String(ClassName), Array::Create());
+    }
+
+    inline int resource_to_fd(const Resource &fd){
+        File *file = fd.getTyped<File>();
+        if(file->valid()){
+            return file->fd();
+        }
+        Socket *sock = fd.getTyped<Socket>();
+        if(sock->valid()){
+            return sock->fd();
+        }
+        return -1;
     }
 
 }

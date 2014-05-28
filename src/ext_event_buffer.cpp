@@ -102,19 +102,6 @@ namespace HPHP
         return data;
     }
 
-    inline int resource_to_fd(const Resource &fd){
-        File *file = fd.getTyped<File>();
-        if(file->valid()){
-            return file->fd();
-        }
-        Socket *sock = fd.getTyped<Socket>();
-        if(sock->valid()){
-            return sock->fd();
-        }
-        return -1;
-
-    }
-
     static Variant HHVM_METHOD(EventBuffer, readFrom, const Resource &fd, int64_t howmuch) {
         int fd_r;
         int64_t res;

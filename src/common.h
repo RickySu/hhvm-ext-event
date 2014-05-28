@@ -13,7 +13,8 @@ namespace HPHP
         s_eventbufferevent("EventBufferEvent"),
         s_eventbufferevent_input("input"),
         s_eventbufferevent_output("output"),
-        s_eventbuffer("EventBuffer")
+        s_eventbuffer("EventBuffer"),
+        s_event("Event")
     ;
 }
 #endif	/* COMMON_H */

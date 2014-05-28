@@ -25,8 +25,8 @@ namespace HPHP {
         ObjectData *getReadCB();
         ObjectData *getWriteCB();
         ObjectData *getEventCB();
-        void setArg(const Variant *arg);
-        const Variant *getArg();
+        void setArg(const Variant &arg);
+        const Variant &getArg();
         ObjectData *getObjectData();
     private:
         ObjectData *readcb, *writecb, *eventcb, *object;

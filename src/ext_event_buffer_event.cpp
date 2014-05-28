@@ -8,19 +8,19 @@ namespace HPHP {
     static void bevent_read_cb(event_buffer_event_t *bevent, void *data)
     {
         EventBufferEventResource *EBEResource = (EventBufferEventResource *) data;
-        vm_call_user_func(Object(EBEResource->getReadCB()), make_packed_array(Object(EBEResource->getObjectData()), *EBEResource->getArg()));
+        vm_call_user_func(Object(EBEResource->getReadCB()), make_packed_array(Object(EBEResource->getObjectData()), EBEResource->getArg()));
     }
 
     static void bevent_write_cb(event_buffer_event_t *bevent, void *data)
     {
         EventBufferEventResource *EBEResource = (EventBufferEventResource *) data;
-        vm_call_user_func(Object(EBEResource->getWriteCB()), make_packed_array(Object(EBEResource->getObjectData()), *EBEResource->getArg()));
+        vm_call_user_func(Object(EBEResource->getWriteCB()), make_packed_array(Object(EBEResource->getObjectData()), EBEResource->getArg()));
     }
 
     static void bevent_event_cb(event_buffer_event_t *bevent, short events, void *data)
     {
         EventBufferEventResource *EBEResource = (EventBufferEventResource *) data;
-        vm_call_user_func(Object(EBEResource->getEventCB()), make_packed_array(Object(EBEResource->getObjectData()), events, *EBEResource->getArg()));
+        vm_call_user_func(Object(EBEResource->getEventCB()), make_packed_array(Object(EBEResource->getObjectData()), events, EBEResource->getArg()));
     }
 
     inline void freeCB(EventBufferEventResource *EBEResource) {
@@ -40,7 +40,7 @@ namespace HPHP {
         bufferevent_data_cb  write_cb;
         bufferevent_event_cb event_cb;
         EBEResource->setCallback(readcb.get(), writecb.get(), eventcb.get());
-        EBEResource->setArg(&arg);
+        EBEResource->setArg(arg);
         if(readcb.isNull()){
             read_cb = (bufferevent_data_cb) NULL;
         }

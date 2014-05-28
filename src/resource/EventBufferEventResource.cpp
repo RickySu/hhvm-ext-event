@@ -9,7 +9,7 @@
 
 namespace HPHP {
     IMPLEMENT_OBJECT_ALLOCATION(EventBufferEventResource)
-    
+
     EventBufferEventResource::EventBufferEventResource(event_buffer_event_t *event_buffer_event, ObjectData *object):InternalResource((void*) event_buffer_event) {
         this->object = object;
     }
@@ -25,12 +25,12 @@ namespace HPHP {
         this->eventcb = eventcb;
     }
 
-    void EventBufferEventResource::setArg(const Variant *arg) {
-        this->arg = arg;
+    void EventBufferEventResource::setArg(const Variant &arg) {
+        this->arg = &arg;
     }
 
-    const Variant *EventBufferEventResource::getArg() {
-        return arg;
+    const Variant &EventBufferEventResource::getArg() {
+        return *arg;
     }
 
     ObjectData* EventBufferEventResource::getReadCB()

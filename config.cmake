@@ -16,6 +16,7 @@ set(LIBEVENT_LIBRARIES event.so event_pthreads.so)
 HHVM_EXTENSION(event
     src/resource/InternalResource.cpp
     src/resource/EventBufferEventResource.cpp
+    src/resource/EventResource.cpp
     src/ext.cpp
     src/ext_event_base.cpp
     src/ext_event_config.cpp
