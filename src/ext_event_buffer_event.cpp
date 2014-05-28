@@ -238,6 +238,6 @@ namespace HPHP {
         HHVM_ME(EventBufferEvent, setWatermark);
         HHVM_ME(EventBufferEvent, write);
         HHVM_ME(EventBufferEvent, writeBuffer);
-         HHVM_STATIC_ME(EventBufferEvent, createPair);
+        HHVM_STATIC_ME(EventBufferEvent, createPair);
     }
 }

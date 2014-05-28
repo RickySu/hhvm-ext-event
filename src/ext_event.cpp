@@ -100,11 +100,28 @@ namespace HPHP
         freeCB(EResource);
     }
 
+    static Array HHVM_STATIC_METHOD(Event, getSupportedMethods)
+    {
+        int i;
+        const char **methods;
+        Array ret;
+
+        methods = event_get_supported_methods();
+
+        if(methods != NULL){
+            for (i = 0; methods[i] != NULL; ++i) {
+                ret.add(i, String(methods[i]));
+            }
+        }
+        return ret;
+    }
+
     void eventExtension::_initEventClass()
     {
         HHVM_ME(Event, __construct);
         HHVM_ME(Event, add);
         HHVM_ME(Event, del);
         HHVM_ME(Event, free);
+        HHVM_STATIC_ME(Event, getSupportedMethods);
     }
 }
