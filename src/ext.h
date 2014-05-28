@@ -29,6 +29,7 @@ namespace HPHP
                 _initEventBufferEventClass();
                 _initEventBufferClass();
                 _initEventClass();
+                _initEventUtilClass();
                 loadSystemlib();
             }
         private:
@@ -37,6 +38,7 @@ namespace HPHP
             void _initEventBufferEventClass();
             void _initEventBufferClass();
             void _initEventClass();
+            void _initEventUtilClass();
     };
 
     inline Object makeObject(const String &ClassName, const Array arg){
