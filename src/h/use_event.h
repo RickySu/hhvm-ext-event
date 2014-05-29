@@ -14,6 +14,9 @@
 #include <event2/buffer.h>
 #include <event2/thread.h>
 
+#ifdef HAVE_LIBEVENT_SSL_SUPPORT
+    #include <event2/bufferevent_ssl.h>
+#endif
 
 #endif	/* USE_EVENT_H */
 

@@ -223,6 +223,24 @@ namespace HPHP {
         return make_packed_array(makeObject("EventBufferEvent", make_packed_array(base)), makeObject("EventBufferEvent", make_packed_array(base)));
     }
 
+#ifdef HAVE_LIBEVENT_SSL_SUPPORT
+    static String HHVM_METHOD(EventBufferEvent, sslError) {
+        unsigned long e;
+        char buf[512];
+        EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
+        e = bufferevent_get_openssl_error((event_buffer_event_t *) EBEResource->getInternalResource());
+        if(e){
+            return StringData::Make(ERR_error_string(e, buf));
+        }
+        return false;
+    }
+
+    static void HHVM_METHOD(EventBufferEvent, sslRenegotiate) {
+        EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
+        bufferevent_ssl_renegotiate((event_buffer_event_t *) EBEResource->getInternalResource());
+    }
+#endif
+
     void eventExtension::_initEventBufferEventClass() {
         HHVM_ME(EventBufferEvent, __construct);
         HHVM_ME(EventBufferEvent, connect);
@@ -236,6 +254,10 @@ namespace HPHP {
         HHVM_ME(EventBufferEvent, setPriority);
         HHVM_ME(EventBufferEvent, setTimeouts);
         HHVM_ME(EventBufferEvent, setWatermark);
+#ifdef HAVE_LIBEVENT_SSL_SUPPORT
+        HHVM_ME(EventBufferEvent, sslError);
+        HHVM_ME(EventBufferEvent, sslRenegotiate);
+#endif
         HHVM_ME(EventBufferEvent, write);
         HHVM_ME(EventBufferEvent, writeBuffer);
         HHVM_STATIC_ME(EventBufferEvent, createPair);

@@ -1,8 +1,10 @@
 #ifndef CONFIG_H
 #define	CONFIG_H
+
 #cmakedefine OPENSSL_FOUND
 #cmakedefine HAVE_DISPATCH_INTERVAL_FUNCTION
 #cmakedefine HAVE_SYS_UN_H
+#cmakedefine HAVE_LIBEVENT_SSL_SUPPORT
 
 #endif	/* CONFIG_H */
 

@@ -46,9 +46,9 @@ final class EventBufferEvent
     <<__Native>> function setPriority(int $priority): bool;
     <<__Native>> function setTimeouts(float $timeout_read, float $timeout_write): bool;
     <<__Native>> function setWatermark(int $events, int $lowmark, int $highmark): void;
-    //<<__Native>> function sslError(): string;
+    <*HAVE_LIBEVENT_SSL_SUPPORT*><<__Native>> function sslError(): string;
     //<<__Native>> static function sslFilter(EventBase $base, EventBufferEvent $underlying, EventSslContext $ctx, int $state, int $options = 0): EventBufferEvent;
-    //<<__Native>> function sslRenegotiate(): void;
+    <*HAVE_LIBEVENT_SSL_SUPPORT*><<__Native>> function sslRenegotiate(): void;
     //<<__Native>> static function sslSocket(EventBase $base, resource $socket, EventSslContext $ctx, int $state, int $options):EventBufferEvent EventBufferEvent;
     <<__Native>> function write(string $data): bool;
     <<__Native>> function writeBuffer(EventBuffer $buf): bool;

@@ -10,6 +10,7 @@
 
 #ifdef OPENSSL_FOUND
     #include <openssl/rand.h>
+    #include <openssl/err.h>
 #endif
 
 #endif	/* USE_OPENSSL_H */

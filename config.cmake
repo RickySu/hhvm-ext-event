@@ -8,8 +8,9 @@ include(FindOpenSSL)
 find_package(libevent2 REQUIRED)
 set(LIBEVENT_LIBRARIES event.so event_pthreads.so)
 
-CHECK_FUNCTION_EXISTS(event_config_set_max_dispatch_interval HAVE_DISPATCH_INTERVAL_FUNCTION)
 CHECK_INCLUDE_FILES (sys/un.h HAVE_SYS_UN_H)
+CHECK_INCLUDE_FILES (event2/bufferevent_ssl.h HAVE_LIBEVENT_SSL_SUPPORT)
+CHECK_FUNCTION_EXISTS(event_config_set_max_dispatch_interval HAVE_DISPATCH_INTERVAL_FUNCTION)
 CONFIGURE_FILE(${CMAKE_CURRENT_BINARY_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 include(ConfigureHNIInclude)
