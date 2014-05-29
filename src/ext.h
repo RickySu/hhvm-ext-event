@@ -27,6 +27,9 @@ namespace HPHP
                 _initEventBufferClass();
                 _initEventClass();
                 _initEventUtilClass();
+#ifdef HAVE_LIBEVENT_SSL_SUPPORT
+                _initEventSslContextClass();
+#endif
                 loadSystemlib();
             }
         private:
@@ -36,6 +39,9 @@ namespace HPHP
             void _initEventBufferClass();
             void _initEventClass();
             void _initEventUtilClass();
+#ifdef HAVE_LIBEVENT_SSL_SUPPORT
+            void _initEventSslContextClass();
+#endif
     };
 
     ALWAYS_INLINE Object makeObject(const String &ClassName, const Array arg){
