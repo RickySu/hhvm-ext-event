@@ -33,5 +33,5 @@ final class  EventUtil
     <<__Native>> static function getSocketFd(resource $socket): int;
     <<__Native>> static function getSocketName(resource $socket, string &$address, ?mixed &$port = NULL): bool;
     <<__Native>> static function setSocketOption(resource $socket, int $level, int $optname, mixed $optval): bool;
-    <*OPENSSL_FOUND*><<__Native>> static function sslRandPoll(): bool;
+    <*HAVE_LIBEVENT_SSL_SUPPORT*><<__Native>> static function sslRandPoll(): bool;
 }

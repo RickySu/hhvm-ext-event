@@ -8,6 +8,7 @@
 #ifndef INTERNALRESOURCE_H
 #define	INTERNALRESOURCE_H
 
+#include "../../config.h"
 #include "hphp/runtime/base/base-includes.h"
 #include <event2/event.h>
 

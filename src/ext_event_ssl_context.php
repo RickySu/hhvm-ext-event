@@ -21,9 +21,9 @@ final class EventSslContext
     const int OPT_CIPHERS = 9 ;
 
     /* Properties */
-    public string $local_cert ;
-    public string $local_pk ;
+    public ?string $local_cert = NULL;
+    public ?string $local_pk = NULL;
 
     /* Methods */
-    <*HAVE_LIBEVENT_SSL_SUPPORT*><<__Native>> public __construct(int $method, array $options);
+    <*HAVE_LIBEVENT_SSL_SUPPORT*><<__Native>> public function __construct(int $method, array $options): void;
 }

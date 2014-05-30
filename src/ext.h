@@ -7,10 +7,15 @@
 #include "hphp/runtime/vm/jit/translator-inline.h"
 #include "resource/EventBufferEventResource.h"
 #include "resource/EventResource.h"
+#include "resource/EventSSLContextResource.h"
 #include "h/util.h"
 #include "h/common.h"
 #include "h/use_event.h"
 #include "h/use_openssl.h"
+
+#ifdef HAVE_LIBEVENT_SSL_SUPPORT
+    extern int event_ssl_data_index;
+#endif
 
 namespace HPHP
 {

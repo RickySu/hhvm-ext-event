@@ -1,4 +1,5 @@
 #include "ext.h"
+
 namespace HPHP
 {
     eventExtension s_event_extension;
