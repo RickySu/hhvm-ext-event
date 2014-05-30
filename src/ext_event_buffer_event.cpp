@@ -66,10 +66,24 @@ namespace HPHP {
         }
     }
 
+    ALWAYS_INLINE void initEventBufferEvent(event_buffer_event_t *bevent, const Object &event_buffer_event, const Object &readcb, const Object &writecb, const Object &eventcb, const Variant &arg) {
+        Resource resource;
+        resource = Resource(NEWOBJ(EventBufferEventResource(bevent, event_buffer_event.get())));
+        SET_RESOURCE(event_buffer_event, resource, s_eventbufferevent);
+        EventBufferEventResource *EBEResource = FETCH_RESOURCE(event_buffer_event, EventBufferEventResource, s_eventbufferevent);
+        EBEResource->setArg(arg);
+        setCB(EBEResource, readcb, writecb, eventcb);
+        Object inputBuffer = makeObject("EventBuffer");
+        Resource inputBufferResource = Resource(NEWOBJ(InternalResource(evbuffer_new())));
+        event_buffer_event->o_set(s_eventbufferevent_input, inputBuffer, s_eventbufferevent);
+        Object outputBuffer = makeObject("EventBuffer");
+        Resource outputBufferResource = Resource(NEWOBJ(InternalResource(evbuffer_new())));
+        event_buffer_event->o_set(s_eventbufferevent_output, outputBuffer, s_eventbufferevent);
+    }
+
     static void HHVM_METHOD(EventBufferEvent, __construct, const Object &base, const Resource &socket, int64_t options, const Object &readcb, const Object &writecb, const Object &eventcb, const Variant &arg) {
         evutil_socket_t fd;
         event_buffer_event_t *bevent;
-        Resource resource;
         InternalResource *EBResource = FETCH_RESOURCE(base, InternalResource, s_eventbase);
         event_base_t *event_base = (event_base_t *)EBResource->getInternalResource();
         if(socket.isNull()){
@@ -88,17 +102,8 @@ namespace HPHP {
         if(bevent == NULL){
             raise_error("Failed to allocate bufferevent for socket");
         }
-        resource = Resource(NEWOBJ(EventBufferEventResource(bevent, this_.get())));
-        SET_RESOURCE(this_, resource, s_eventbufferevent);
-        EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
-        EBEResource->setArg(arg);
-        setCB(EBEResource, readcb, writecb, eventcb);
-        Object inputBuffer = makeObject("EventBuffer");
-        Resource inputBufferResource = Resource(NEWOBJ(InternalResource(evbuffer_new())));
-        this_->o_set(s_eventbufferevent_input, inputBuffer, s_eventbufferevent);
-        Object outputBuffer = makeObject("EventBuffer");
-        Resource outputBufferResource = Resource(NEWOBJ(InternalResource(evbuffer_new())));
-        this_->o_set(s_eventbufferevent_output, outputBuffer, s_eventbufferevent);
+
+        initEventBufferEvent(bevent, this_, readcb, writecb, eventcb, arg);
     }
 
     static void HHVM_METHOD(EventBufferEvent, free) {
@@ -239,6 +244,26 @@ namespace HPHP {
         EventBufferEventResource *EBEResource = FETCH_RESOURCE(this_, EventBufferEventResource, s_eventbufferevent);
         bufferevent_ssl_renegotiate((event_buffer_event_t *) EBEResource->getInternalResource());
     }
+
+    static Object HHVM_STATIC_METHOD(EventBufferEvent, sslFilter, const Object &base, const Object &underlying, const Object ctx, int64_t state, int64_t options) {
+        SSL *ssl;
+        event_buffer_event_t *bevent;
+        InternalResource *EBResource = FETCH_RESOURCE(base, InternalResource, s_eventbase);
+        EventBufferEventResource *EBEResource = FETCH_RESOURCE(underlying, EventBufferEventResource, s_eventbufferevent);
+        EventSSLContextResource *SSLContextResource = FETCH_RESOURCE(underlying, EventSSLContextResource, s_event_ssl_context);
+        if(!(ssl = SSL_new((SSL_CTX *) SSLContextResource->getInternalResource()))){
+            raise_error("Event: Failed creating SSL handle");
+        }
+
+        if((bevent = bufferevent_openssl_filter_new((event_base_t *) EBResource->getInternalResource(), (event_buffer_event_t *) EBEResource->getInternalResource(), ssl, (bufferevent_ssl_state) state, options)) == NULL){
+            raise_error("Failed to allocate bufferevent filter");
+        }
+
+        String ClassName("EventBufferEvent");
+        Object event_buffer_event = ObjectData::newInstance(Unit::lookupClass(ClassName.get()));
+        initEventBufferEvent(bevent, event_buffer_event, Object(), Object(), Object(), Variant());
+        return event_buffer_event;
+    }
 #endif
 
     void eventExtension::_initEventBufferEventClass() {
@@ -257,6 +282,7 @@ namespace HPHP {
 #ifdef HAVE_LIBEVENT_SSL_SUPPORT
         HHVM_ME(EventBufferEvent, sslError);
         HHVM_ME(EventBufferEvent, sslRenegotiate);
+        HHVM_STATIC_ME(EventBufferEvent, sslFilter);
 #endif
         HHVM_ME(EventBufferEvent, write);
         HHVM_ME(EventBufferEvent, writeBuffer);
