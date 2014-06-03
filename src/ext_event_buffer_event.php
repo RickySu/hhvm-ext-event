@@ -49,7 +49,7 @@ final class EventBufferEvent
     <*HAVE_LIBEVENT_SSL_SUPPORT*><<__Native>> function sslError(): string;
     <*HAVE_LIBEVENT_SSL_SUPPORT*><<__Native>> static function sslFilter(EventBase $base, EventBufferEvent $underlying, EventSslContext $ctx, int $state, int $options = 0): EventBufferEvent;
     <*HAVE_LIBEVENT_SSL_SUPPORT*><<__Native>> function sslRenegotiate(): void;
-    <<__Native>> static function sslSocket(EventBase $base, resource $socket, EventSslContext $ctx, int $state, int $options):EventBufferEvent EventBufferEvent;
+    <<__Native>> static function sslSocket(EventBase $base, resource $socket, EventSslContext $ctx, int $state, int $options):EventBufferEvent;
     <<__Native>> function write(string $data): bool;
     <<__Native>> function writeBuffer(EventBuffer $buf): bool;
 }

@@ -8,6 +8,7 @@
 #include "resource/EventBufferEventResource.h"
 #include "resource/EventResource.h"
 #include "resource/EventSSLContextResource.h"
+#include "resource/EventHttpResource.h"
 #include "h/util.h"
 #include "h/common.h"
 #include "h/use_event.h"
@@ -35,7 +36,7 @@ namespace HPHP
 #ifdef HAVE_LIBEVENT_SSL_SUPPORT
                 _initEventSslContextClass();
 #endif
-#ifdef HAVE_EVENT_HTTP_SUPPORT
+#ifdef HAVE_LIBEVENT_HTTP_SUPPORT
                 _initEventHttpClass();
 #endif
                 loadSystemlib();
@@ -50,7 +51,7 @@ namespace HPHP
 #ifdef HAVE_LIBEVENT_SSL_SUPPORT
             void _initEventSslContextClass();
 #endif
-#ifdef HAVE_EVENT_HTTP_SUPPORT
+#ifdef HAVE_LIBEVENT_HTTP_SUPPORT
             void _initEventHttpClass();
 #endif
     };

@@ -4,7 +4,6 @@
 int event_ssl_data_index;
 
 namespace HPHP {
-    using JIT::VMRegAnchor;
 
     static int verify_callback(int preverify_ok, X509_STORE_CTX *ctx) {
         int ret = preverify_ok, err, depth;
@@ -179,7 +178,6 @@ namespace HPHP {
     }
 
     static void HHVM_METHOD(EventSslContext, __construct, int64_t method, const Array &options) {
-        VMRegAnchor _;
         SSL_METHOD *ssl_method;
         SSL_CTX *ssl_ctx;
         long ssl_option = SSL_OP_ALL;

@@ -9,14 +9,8 @@
 #define	INTERNALRESOURCE_H
 
 #include "../../config.h"
+#include "../h/use_event.h"
 #include "hphp/runtime/base/base-includes.h"
-#include <event2/event.h>
-
-typedef struct event_base event_base_t;
-typedef struct event_config event_config_t;
-typedef struct bufferevent event_buffer_event_t;
-typedef struct evbuffer event_buffer_t;
-typedef struct event event_t;
 
 namespace HPHP {
 

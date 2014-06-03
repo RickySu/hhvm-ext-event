@@ -168,9 +168,7 @@ namespace HPHP
             EResource->setFd(fd.asCResRef());
         }
 
-        if(!arg.isNull()){
-            EResource->setArg(arg);
-        }
+        EResource->setArg(arg);
 
         freeCB(EResource);
         setCB(EResource, cb);
