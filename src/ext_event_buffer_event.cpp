@@ -229,6 +229,14 @@ namespace HPHP {
     }
 
 #ifdef HAVE_LIBEVENT_SSL_SUPPORT
+
+    ALWAYS_INLINE bool is_valid_ssl_state(int64_t state)
+    {
+            return  (state == BUFFEREVENT_SSL_OPEN
+                    || state == BUFFEREVENT_SSL_CONNECTING
+                    || state == BUFFEREVENT_SSL_ACCEPTING);
+    }
+
     static String HHVM_METHOD(EventBufferEvent, sslError) {
         unsigned long e;
         char buf[512];
@@ -245,18 +253,26 @@ namespace HPHP {
         bufferevent_ssl_renegotiate((event_buffer_event_t *) EBEResource->getInternalResource());
     }
 
-    static Object HHVM_STATIC_METHOD(EventBufferEvent, sslFilter, const Object &base, const Object &underlying, const Object ctx, int64_t state, int64_t options) {
+    static Object HHVM_STATIC_METHOD(EventBufferEvent, sslSocket, const Object &base, const Object &underlying, const Object ctx, int64_t state, int64_t options) {
         SSL *ssl;
         event_buffer_event_t *bevent;
         InternalResource *EBResource = FETCH_RESOURCE(base, InternalResource, s_eventbase);
         EventBufferEventResource *EBEResource = FETCH_RESOURCE(underlying, EventBufferEventResource, s_eventbufferevent);
         EventSSLContextResource *SSLContextResource = FETCH_RESOURCE(underlying, EventSSLContextResource, s_event_ssl_context);
+
+        if (!is_valid_ssl_state(state)) {
+            raise_warning("Invalid state specified");
+            return NULL;
+        }
+
         if(!(ssl = SSL_new((SSL_CTX *) SSLContextResource->getInternalResource()))){
-            raise_error("Event: Failed creating SSL handle");
+            raise_warning("Event: Failed creating SSL handle");
+            return NULL;
         }
 
         if((bevent = bufferevent_openssl_filter_new((event_base_t *) EBResource->getInternalResource(), (event_buffer_event_t *) EBEResource->getInternalResource(), ssl, (bufferevent_ssl_state) state, options)) == NULL){
-            raise_error("Failed to allocate bufferevent filter");
+            raise_warning("Failed to allocate bufferevent filter");
+            return NULL;
         }
 
         String ClassName("EventBufferEvent");
@@ -264,6 +280,51 @@ namespace HPHP {
         initEventBufferEvent(bevent, event_buffer_event, Object(), Object(), Object(), Variant());
         return event_buffer_event;
     }
+
+    static Object HHVM_STATIC_METHOD(EventBufferEvent, sslFilter, const Object &base, const Resource &socket, const Object ctx, int64_t state, int64_t options) {
+        evutil_socket_t fd;
+        SSL *ssl;
+        event_buffer_event_t *bevent;
+        InternalResource *EBResource = FETCH_RESOURCE(base, InternalResource, s_eventbase);
+        EventSSLContextResource *SSLContextResource = FETCH_RESOURCE(ctx, EventSSLContextResource, s_event_ssl_context);
+
+        if (!is_valid_ssl_state(state)) {
+            raise_warning("Invalid state specified");
+            return NULL;
+        }
+
+        if(socket.isNull()){
+            fd = -1;
+            options |= BEV_OPT_CLOSE_ON_FREE;
+        }
+        else{
+            Socket *sock = socket.getTyped<Socket>();
+            fd = sock->fd();
+            if(fd < 0){
+                raise_error("valid PHP socket resource expected");
+            }
+            evutil_make_socket_nonblocking(fd);
+        }
+
+        if(!(ssl = SSL_new((SSL_CTX *) SSLContextResource->getInternalResource()))){
+            raise_warning("Event: Failed creating SSL handle");
+            return NULL;
+        }
+
+        SSL_set_ex_data(ssl, event_ssl_data_index, SSLContextResource);
+
+        if((bevent = bufferevent_openssl_socket_new((event_base_t *) EBResource->getInternalResource(), fd, ssl, (bufferevent_ssl_state) state, options))){
+            raise_warning("Failed to allocate bufferevent ssl socket");
+            return NULL;
+        }
+
+        String ClassName("EventBufferEvent");
+        Object event_buffer_event = ObjectData::newInstance(Unit::lookupClass(ClassName.get()));
+        initEventBufferEvent(bevent, event_buffer_event, Object(), Object(), Object(), Variant());
+        return event_buffer_event;
+
+    }
+
 #endif
 
     void eventExtension::_initEventBufferEventClass() {
@@ -283,6 +344,7 @@ namespace HPHP {
         HHVM_ME(EventBufferEvent, sslError);
         HHVM_ME(EventBufferEvent, sslRenegotiate);
         HHVM_STATIC_ME(EventBufferEvent, sslFilter);
+        HHVM_STATIC_ME(EventBufferEvent, sslSocket);
 #endif
         HHVM_ME(EventBufferEvent, write);
         HHVM_ME(EventBufferEvent, writeBuffer);
