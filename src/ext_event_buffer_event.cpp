@@ -253,7 +253,7 @@ namespace HPHP {
         bufferevent_ssl_renegotiate((event_buffer_event_t *) EBEResource->getInternalResource());
     }
 
-    static Object HHVM_STATIC_METHOD(EventBufferEvent, sslSocket, const Object &base, const Object &underlying, const Object ctx, int64_t state, int64_t options) {
+    static Object HHVM_STATIC_METHOD(EventBufferEvent, sslFilter, const Object &base, const Object &underlying, const Object ctx, int64_t state, int64_t options) {
         SSL *ssl;
         event_buffer_event_t *bevent;
         InternalResource *EBResource = FETCH_RESOURCE(base, InternalResource, s_eventbase);
@@ -281,7 +281,7 @@ namespace HPHP {
         return event_buffer_event;
     }
 
-    static Object HHVM_STATIC_METHOD(EventBufferEvent, sslFilter, const Object &base, const Resource &socket, const Object ctx, int64_t state, int64_t options) {
+    static Object HHVM_STATIC_METHOD(EventBufferEvent, sslSocket, const Object &base, const Resource &socket, const Object ctx, int64_t state, int64_t options) {
         evutil_socket_t fd;
         SSL *ssl;
         event_buffer_event_t *bevent;

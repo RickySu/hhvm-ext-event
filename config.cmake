@@ -9,8 +9,7 @@ find_package(libevent2 REQUIRED)
 set(LIBEVENT_LIBRARIES event.so event_pthreads.so)
 
 CHECK_INCLUDE_FILES (sys/un.h HAVE_SYS_UN_H)
-CHECK_INCLUDE_FILES (event2/bufferevent_ssl.h HAVE_LIBEVENT_SSL_SUPPORT)
-CHECK_FUNCTION_EXISTS(event_config_set_max_dispatch_interval HAVE_DISPATCH_INTERVAL_FUNCTION)
+
 CONFIGURE_FILE(${CMAKE_CURRENT_BINARY_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 include(ConfigureHNIInclude)
@@ -27,6 +26,7 @@ HHVM_EXTENSION(event
     src/ext_event_buffer.cpp
     src/ext_event.cpp
     src/ext_event_util.cpp
+    src/ext_event_http.cpp
     src/ext_event_ssl_context
 )
 HHVM_SYSTEMLIB(event ext_event.php)

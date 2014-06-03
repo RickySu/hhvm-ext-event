@@ -4,6 +4,7 @@
 #cmakedefine OPENSSL_FOUND
 #cmakedefine HAVE_DISPATCH_INTERVAL_FUNCTION
 #cmakedefine HAVE_SYS_UN_H
+#cmakedefine HAVE_LIBEVENT_HTTP_SUPPORT
 
 #ifdef OPENSSL_FOUND
     #cmakedefine HAVE_LIBEVENT_SSL_SUPPORT

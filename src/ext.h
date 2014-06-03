@@ -35,6 +35,9 @@ namespace HPHP
 #ifdef HAVE_LIBEVENT_SSL_SUPPORT
                 _initEventSslContextClass();
 #endif
+#ifdef HAVE_EVENT_HTTP_SUPPORT
+                _initEventHttpClass();
+#endif
                 loadSystemlib();
             }
         private:
@@ -46,6 +49,9 @@ namespace HPHP
             void _initEventUtilClass();
 #ifdef HAVE_LIBEVENT_SSL_SUPPORT
             void _initEventSslContextClass();
+#endif
+#ifdef HAVE_EVENT_HTTP_SUPPORT
+            void _initEventHttpClass();
 #endif
     };
 

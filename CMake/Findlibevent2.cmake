@@ -34,4 +34,8 @@ endif ()
 mark_as_advanced(
     LIBEVENT_LIB
     LIBEVENT_INCLUDE_DIR
-  )
+)
+
+CHECK_FUNCTION_EXISTS(event_config_set_max_dispatch_interval HAVE_DISPATCH_INTERVAL_FUNCTION)
+CHECK_FUNCTION_EXISTS(evhttp_new HAVE_LIBEVENT_HTTP_SUPPORT)
+CHECK_INCLUDE_FILES (event2/bufferevent_ssl.h HAVE_LIBEVENT_SSL_SUPPORT)
