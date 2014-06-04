@@ -5,32 +5,32 @@ namespace HPHP
 
     static void HHVM_METHOD(EventBuffer, __construct)
     {
-        Resource resource = Resource(NEWOBJ(InternalResource(evbuffer_new())));
+        Resource resource = Resource(NEWOBJ(InternalResourceData(evbuffer_new())));
         SET_RESOURCE(this_, resource, s_eventbuffer);
     }
 
     static bool HHVM_METHOD(EventBuffer, add, const String &data) {
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        return evbuffer_add((event_buffer_t *) resource->getInternalResource(), data.c_str(), data.size()) == 0;
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        return evbuffer_add((event_buffer_t *) resource_data->getInternalResourceData(), data.c_str(), data.size()) == 0;
     }
 
     static bool HHVM_METHOD(EventBuffer, addBuffer, const Object &buf) {
-        InternalResource *resource_dst = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        InternalResource *resource_src = FETCH_RESOURCE(buf, InternalResource, s_eventbuffer);
-        return evbuffer_add_buffer((event_buffer_t *) resource_dst->getInternalResource(), (event_buffer_t *) resource_src->getInternalResource()) == 0;
+        InternalResourceData *resource_data_dst = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        InternalResourceData *resource_data_src = FETCH_RESOURCE(buf, InternalResourceData, s_eventbuffer);
+        return evbuffer_add_buffer((event_buffer_t *) resource_data_dst->getInternalResourceData(), (event_buffer_t *) resource_data_src->getInternalResourceData()) == 0;
     }
 
     static int64_t HHVM_METHOD(EventBuffer, appendFrom, const Object &buf, int64_t len) {
-        InternalResource *resource_dst = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        InternalResource *resource_src = FETCH_RESOURCE(buf, InternalResource, s_eventbuffer);
-        return evbuffer_remove_buffer((event_buffer_t *) resource_dst->getInternalResource(), (event_buffer_t *) resource_src->getInternalResource(), len);
+        InternalResourceData *resource_data_dst = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        InternalResourceData *resource_data_src = FETCH_RESOURCE(buf, InternalResourceData, s_eventbuffer);
+        return evbuffer_remove_buffer((event_buffer_t *) resource_data_dst->getInternalResourceData(), (event_buffer_t *) resource_data_src->getInternalResourceData(), len);
     }
 
     static int64_t HHVM_METHOD(EventBuffer, copyout, VRefParam data, int64_t max_bytes) {
         char *tmp_data = new char[max_bytes+1];
         ev_ssize_t read_size;
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        read_size = evbuffer_copyout((event_buffer_t *) resource->getInternalResource(), tmp_data, max_bytes);
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        read_size = evbuffer_copyout((event_buffer_t *) resource_data->getInternalResourceData(), tmp_data, max_bytes);
         if(read_size > 0){
             data = StringData::Make(tmp_data, read_size, CopyString);
         }
@@ -39,48 +39,48 @@ namespace HPHP
     }
 
     static bool HHVM_METHOD(EventBuffer, drain, int64_t len) {
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        return evbuffer_drain((event_buffer_t *) resource->getInternalResource(), len) == 0;
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        return evbuffer_drain((event_buffer_t *) resource_data->getInternalResourceData(), len) == 0;
     }
 
     static void HHVM_METHOD(EventBuffer, enableLocking) {
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        evbuffer_enable_locking((event_buffer_t *) resource->getInternalResource(), NULL);
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        evbuffer_enable_locking((event_buffer_t *) resource_data->getInternalResourceData(), NULL);
     }
 
     static bool HHVM_METHOD(EventBuffer, expand, int64_t len) {
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        return evbuffer_expand((event_buffer_t *) resource->getInternalResource(), len) == 0;
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        return evbuffer_expand((event_buffer_t *) resource_data->getInternalResourceData(), len) == 0;
     }
 
     static bool HHVM_METHOD(EventBuffer, freeze, bool at_front) {
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        return evbuffer_freeze((event_buffer_t *) resource->getInternalResource(), (int)at_front) == 0;
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        return evbuffer_freeze((event_buffer_t *) resource_data->getInternalResourceData(), (int)at_front) == 0;
     }
 
     static void HHVM_METHOD(EventBuffer, lock) {
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        evbuffer_lock((event_buffer_t *) resource->getInternalResource());
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        evbuffer_lock((event_buffer_t *) resource_data->getInternalResourceData());
     }
 
     static bool HHVM_METHOD(EventBuffer, prepend, const String &data) {
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        return evbuffer_prepend((event_buffer_t *) resource->getInternalResource(), data.c_str(), data.size()) == 0;
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        return evbuffer_prepend((event_buffer_t *) resource_data->getInternalResourceData(), data.c_str(), data.size()) == 0;
     }
 
     static bool HHVM_METHOD(EventBuffer, prependBuffer, const Object &buf) {
-        InternalResource *resource_dst = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        InternalResource *resource_src = FETCH_RESOURCE(buf, InternalResource, s_eventbuffer);
-        return evbuffer_prepend_buffer((event_buffer_t *) resource_dst->getInternalResource(), (event_buffer_t *) resource_src->getInternalResource()) == 0;
+        InternalResourceData *resource_data_dst = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        InternalResourceData *resource_data_src = FETCH_RESOURCE(buf, InternalResourceData, s_eventbuffer);
+        return evbuffer_prepend_buffer((event_buffer_t *) resource_data_dst->getInternalResourceData(), (event_buffer_t *) resource_data_src->getInternalResourceData()) == 0;
     }
 
     static String HHVM_METHOD(EventBuffer, pullup, int64_t size) {
         unsigned char *data;
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
         if(size < 0){
             return String();
         }
-        data = evbuffer_pullup((event_buffer_t *) resource->getInternalResource(), size);
+        data = evbuffer_pullup((event_buffer_t *) resource_data->getInternalResourceData(), size);
         if(data == NULL){
             return String();
         }
@@ -91,8 +91,8 @@ namespace HPHP
         char *tmp_data = new char[max_bytes+1];
         int read_size;
         StringData *data;
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        read_size = evbuffer_remove((event_buffer_t *) resource->getInternalResource(), (void *)tmp_data, max_bytes);
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        read_size = evbuffer_remove((event_buffer_t *) resource_data->getInternalResourceData(), (void *)tmp_data, max_bytes);
         if(read_size <= 0){
             delete tmp_data;
             return String();
@@ -105,14 +105,14 @@ namespace HPHP
     static Variant HHVM_METHOD(EventBuffer, readFrom, const Resource &fd, int64_t howmuch) {
         int fd_r;
         int64_t res;
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
         fd_r = resource_to_fd(fd);
 
         if(fd_r < 0){
             return false;
         }
 
-        res = evbuffer_read((event_buffer_t *) resource->getInternalResource(), fd_r, howmuch);
+        res = evbuffer_read((event_buffer_t *) resource_data->getInternalResourceData(), fd_r, howmuch);
 
         if(res < 0){
             return false;
@@ -125,8 +125,8 @@ namespace HPHP
         size_t len;
         char *res;
 
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        res = evbuffer_readln((event_buffer_t *) resource->getInternalResource(), &len, (evbuffer_eol_style) eol_style);
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        res = evbuffer_readln((event_buffer_t *) resource_data->getInternalResourceData(), &len, (evbuffer_eol_style) eol_style);
 
         if(!res){
             return String();
@@ -151,8 +151,8 @@ namespace HPHP
 
     static Variant HHVM_METHOD(EventBuffer, search, const String &what, int64_t start, int64_t end) {
         struct evbuffer_ptr ptr_start, ptr_end, ptr_res;
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        event_buffer_t *buf = (event_buffer_t *) resource->getInternalResource();
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        event_buffer_t *buf = (event_buffer_t *) resource_data->getInternalResourceData();
 
         if (start != -1 && get_pos(&ptr_start, start, buf) == false) {
             start = -1;
@@ -177,8 +177,8 @@ namespace HPHP
 
     static Variant HHVM_METHOD(EventBuffer, searchEol, int64_t start, int64_t eol_style) {
         struct evbuffer_ptr ptr_start, ptr_res;
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        event_buffer_t *buf = (event_buffer_t *) resource->getInternalResource();
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        event_buffer_t *buf = (event_buffer_t *) resource_data->getInternalResourceData();
         if (start != -1 && get_pos(&ptr_start, start, buf) == false) {
             start = -1;
         }
@@ -199,8 +199,8 @@ namespace HPHP
         evbuffer_iovec_t *pv;
         int64_t n_chunks, n_read = 0, i;
 
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        event_buffer_t *buf = (event_buffer_t *) resource->getInternalResource();
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        event_buffer_t *buf = (event_buffer_t *) resource_data->getInternalResourceData();
 
         if (get_pos(&ptr, start, buf) == false) {
             return false;
@@ -239,20 +239,20 @@ namespace HPHP
     }
 
     static bool HHVM_METHOD(EventBuffer, unfreeze, bool at_front) {
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        return evbuffer_unfreeze((event_buffer_t *) resource->getInternalResource(), (int)at_front) == 0;
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        return evbuffer_unfreeze((event_buffer_t *) resource_data->getInternalResourceData(), (int)at_front) == 0;
     }
 
     static void HHVM_METHOD(EventBuffer, unlock) {
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        evbuffer_unlock((event_buffer_t *) resource->getInternalResource());
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        evbuffer_unlock((event_buffer_t *) resource_data->getInternalResourceData());
     }
 
     static Variant HHVM_METHOD(EventBuffer, write, const Resource &fd, int64_t howmuch) {
         int fd_r;
         int64_t res;
-        InternalResource *resource = FETCH_RESOURCE(this_, InternalResource, s_eventbuffer);
-        event_buffer_t *buf = (event_buffer_t *) resource->getInternalResource();
+        InternalResourceData *resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbuffer);
+        event_buffer_t *buf = (event_buffer_t *) resource_data->getInternalResourceData();
         fd_r = resource_to_fd(fd);
 
         if(fd_r < 0){

@@ -5,98 +5,93 @@ namespace HPHP {
     static void HHVM_METHOD(EventBase, __construct, const Variant &config) {
         Resource resource;
         if (config.isNull()) {
-            resource = Resource(NEWOBJ(InternalResource(event_base_new())));
+            resource = Resource(NEWOBJ(InternalResourceData(event_base_new())));
         } else {
-            resource = Resource(NEWOBJ(InternalResource(event_base_new_with_config((event_config_t *) FETCH_RESOURCE(config.toObject(), InternalResource, s_eventconfig)->getInternalResource()))));
+            resource = Resource(NEWOBJ(InternalResourceData(event_base_new_with_config((event_config_t *) FETCH_RESOURCE(config.toObject(), InternalResourceData, s_eventconfig)->getInternalResourceData()))));
         }
         SET_RESOURCE(this_, resource, s_eventbase);
     }
 
     static void HHVM_METHOD(EventBase, __destruct) {
-        echo("baseEvet:destruct\n");
-        InternalResource *EBResource = FETCH_RESOURCE(this_, InternalResource, s_eventbase);
-        event_base_free((event_base_t *) EBResource->getInternalResource());
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbase);
+        event_base_free((event_base_t *) event_base_resource_data->getInternalResourceData());
     }
 
     static void HHVM_METHOD(EventBase, dispatch) {
         VMRegAnchor _;
-        Array param;
-        InternalResource *EBResource = FETCH_RESOURCE(this_, InternalResource, s_eventbase);
-        event_base_dispatch((event_base_t *) EBResource->getInternalResource());
-        echo("base loopexited\n");
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbase);
+        event_base_dispatch((event_base_t *) event_base_resource_data->getInternalResourceData());
     }
 
     static bool HHVM_METHOD(EventBase, loopexit, double timeout) {
         int res;
         struct timeval tv;
 
-        InternalResource *EBResource = FETCH_RESOURCE(this_, InternalResource, s_eventbase);
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbase);
 
         if (timeout == 0) {
-            res = event_base_loopexit((event_base_t *) EBResource->getInternalResource(), NULL);
+            res = event_base_loopexit((event_base_t *) event_base_resource_data->getInternalResourceData(), NULL);
         } else {
             TIMEVAL_SET(tv, timeout);
-            res = event_base_loopexit((event_base_t *) EBResource->getInternalResource(), &tv);
+            res = event_base_loopexit((event_base_t *) event_base_resource_data->getInternalResourceData(), &tv);
         }
         return res == 0 ? true : false;
     }
 
     static bool HHVM_METHOD(EventBase, priorityInit, int64_t prio) {
-        InternalResource *EBResource = FETCH_RESOURCE(this_, InternalResource, s_eventbase);
-        return event_base_priority_init((event_base_t *) EBResource->getInternalResource(), prio) == 0 ? true : false;
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbase);
+        return event_base_priority_init((event_base_t *) event_base_resource_data->getInternalResourceData(), prio) == 0 ? true : false;
     }
 
     static bool HHVM_METHOD(EventBase, reInit) {
-        InternalResource *EBResource = FETCH_RESOURCE(this_, InternalResource, s_eventbase);
-        return event_reinit((event_base_t *) EBResource->getInternalResource()) == 0 ? true : false;
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbase);
+        return event_reinit((event_base_t *) event_base_resource_data->getInternalResourceData()) == 0 ? true : false;
     }
 
     static bool HHVM_METHOD(EventBase, stop) {
-        InternalResource *EBResource = FETCH_RESOURCE(this_, InternalResource, s_eventbase);
-        return event_base_loopbreak((event_base_t *) EBResource->getInternalResource()) == 0 ? true : false;
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbase);
+        return event_base_loopbreak((event_base_t *) event_base_resource_data->getInternalResourceData()) == 0 ? true : false;
     }
 
     static bool HHVM_METHOD(EventBase, loop, int64_t flags) {
         VMRegAnchor _;
         int res;
-        InternalResource *EBResource = FETCH_RESOURCE(this_, InternalResource, s_eventbase);
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbase);
 
         if (flags == 0) {
-            res = event_base_dispatch((event_base_t *) EBResource->getInternalResource());
+            res = event_base_dispatch((event_base_t *) event_base_resource_data->getInternalResourceData());
         } else {
-            res = event_base_loop((event_base_t *) EBResource->getInternalResource(), flags);
+            res = event_base_loop((event_base_t *) event_base_resource_data->getInternalResourceData(), flags);
         }
         return res == 0 ? true : false;
     }
 
     static int64_t HHVM_METHOD(EventBase, getFeatures) {
-        InternalResource *EBResource = FETCH_RESOURCE(this_, InternalResource, s_eventbase);
-        return event_base_get_features((event_base_t *) EBResource->getInternalResource());
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbase);
+        return event_base_get_features((event_base_t *) event_base_resource_data->getInternalResourceData());
     }
 
     static Variant HHVM_METHOD(EventBase, getMethod) {
-        InternalResource *EBResource = FETCH_RESOURCE(this_, InternalResource, s_eventbase);
-        String ret((char *) event_base_get_method((event_base_t *) EBResource->getInternalResource()));
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbase);
+        String ret((char *) event_base_get_method((event_base_t *) event_base_resource_data->getInternalResourceData()));
         return ret;
     }
 
     static double HHVM_METHOD(EventBase, getTimeOfDayCached) {
         struct timeval tv;
-        echo("test\n");
-        InternalResource *EBResource = FETCH_RESOURCE(this_, InternalResource, s_eventbase);
-        echo("test123\n");
-        event_base_gettimeofday_cached((event_base_t *) EBResource->getInternalResource(), &tv);
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbase);
+        event_base_gettimeofday_cached((event_base_t *) event_base_resource_data->getInternalResourceData(), &tv);
         return TIMEVAL_TO_DOUBLE(tv);
     }
 
     static bool HHVM_METHOD(EventBase, gotExit) {
-        InternalResource *EBResource = FETCH_RESOURCE(this_, InternalResource, s_eventbase);
-        return event_base_got_exit((event_base_t *) EBResource->getInternalResource()) != 0;
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbase);
+        return event_base_got_exit((event_base_t *) event_base_resource_data->getInternalResourceData()) != 0;
     }
 
     static bool HHVM_METHOD(EventBase, gotStop) {
-        InternalResource *EBResource = FETCH_RESOURCE(this_, InternalResource, s_eventbase);
-        return event_base_got_break((event_base_t *) EBResource->getInternalResource()) != 0;
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventbase);
+        return event_base_got_break((event_base_t *) event_base_resource_data->getInternalResourceData()) != 0;
     }
 
     void eventExtension::_initEventBaseClass() {

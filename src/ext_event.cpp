@@ -4,28 +4,28 @@ namespace HPHP
 {
 
     void event_cb(evutil_socket_t fd_r, short events, void * data) {
-        EventResource *EResource = (EventResource *) data;
-        vm_call_user_func(Object(EResource->getCallback()), make_packed_array(EResource->getFd(), events, EResource->getArg()));
+        EventResourceData *event_resource_data = (EventResourceData *) data;
+        vm_call_user_func(Object(event_resource_data->getCallback()), make_packed_array(event_resource_data->getFd(), events, event_resource_data->getArg()));
     }
 
     void timer_cb(evutil_socket_t fd_r, short events, void * data) {
-        EventResource *EResource = (EventResource *) data;
-        vm_call_user_func(Object(EResource->getCallback()), make_packed_array(EResource->getArg()));
+        EventResourceData *event_resource_data = (EventResourceData *) data;
+        vm_call_user_func(Object(event_resource_data->getCallback()), make_packed_array(event_resource_data->getArg()));
     }
 
     void signal_cb(evutil_socket_t signum, short events, void * data) {
-        EventResource *EResource = (EventResource *) data;
-        vm_call_user_func(Object(EResource->getCallback()), make_packed_array(signum, EResource->getArg()));
+        EventResourceData *event_resource_data = (EventResourceData *) data;
+        vm_call_user_func(Object(event_resource_data->getCallback()), make_packed_array(signum, event_resource_data->getArg()));
     }
 
-    ALWAYS_INLINE void setCB(EventResource *EResource, const Object &callback) {
-        EResource->setCallback(callback.get());
+    ALWAYS_INLINE void setCB(EventResourceData *event_resource_data, const Object &callback) {
+        event_resource_data->setCallback(callback.get());
         callback.get()->incRefCount();
     }
 
-    ALWAYS_INLINE void freeCB(EventResource *EResource) {
-        if(EResource->getCallback() != NULL){
-            EResource->getCallback()->decRefCount();
+    ALWAYS_INLINE void freeCB(EventResourceData *event_resource_data) {
+        if(event_resource_data->getCallback() != NULL){
+            event_resource_data->getCallback()->decRefCount();
         }
     }
 
@@ -34,12 +34,12 @@ namespace HPHP
         evutil_socket_t fd_r;
         event_t *event;
         Resource resource;
-        InternalResource *EBResource = FETCH_RESOURCE(base, InternalResource, s_eventbase);
-        event_base_t *event_base = (event_base_t *)EBResource->getInternalResource();
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_eventbase);
+        event_base_t *event_base = (event_base_t *)event_base_resource_data->getInternalResourceData();
 
-        resource = Resource(NEWOBJ(EventResource(NULL, this_.get())));
+        resource = Resource(NEWOBJ(EventResourceData(NULL, this_.get())));
         SET_RESOURCE(this_, resource, s_event);
-        EventResource *EResource = FETCH_RESOURCE(this_, EventResource, s_event);
+        EventResourceData *event_resource_data = FETCH_RESOURCE(this_, EventResourceData, s_event);
 
         if(what & ~(EV_TIMEOUT | EV_READ | EV_WRITE | EV_SIGNAL | EV_PERSIST | EV_ET)) {
             raise_error("Invalid mask");
@@ -59,52 +59,52 @@ namespace HPHP
             if(fd_r < 0){
                 raise_error("valid PHP socket resource expected");
             }
-            EResource->setFd(fd.asCResRef());
+            event_resource_data->setFd(fd.asCResRef());
         }
 
-        EResource->setArg(arg);
-        setCB(EResource, cb);
-        event = event_new(event_base, fd_r, what, event_cb_fn, (void *)EResource);
-        EResource->setInternalResource((void*)event);
+        event_resource_data->setArg(arg);
+        setCB(event_resource_data, cb);
+        event = event_new(event_base, fd_r, what, event_cb_fn, (void *)event_resource_data);
+        event_resource_data->setInternalResourceData((void*)event);
     }
 
     static bool HHVM_METHOD(Event, add, double timeout)
     {
-        EventResource *EResource = FETCH_RESOURCE(this_, EventResource, s_event);
+        EventResourceData *event_resource_data = FETCH_RESOURCE(this_, EventResourceData, s_event);
         int res;
         struct timeval tv;
         if(timeout < 0){
-            res = event_add((event_t *) EResource->getInternalResource(), NULL);
+            res = event_add((event_t *) event_resource_data->getInternalResourceData(), NULL);
         }
         else {
             TIMEVAL_SET(tv, timeout);
-            res = event_add((event_t *) EResource->getInternalResource(), &tv);
+            res = event_add((event_t *) event_resource_data->getInternalResourceData(), &tv);
         }
         return res == 0;
     }
 
     static bool HHVM_METHOD(Event, del)
     {
-        EventResource *EResource = FETCH_RESOURCE(this_, EventResource, s_event);
-        return event_del((event_t *) EResource->getInternalResource()) == 0;
+        EventResourceData *event_resource_data = FETCH_RESOURCE(this_, EventResourceData, s_event);
+        return event_del((event_t *) event_resource_data->getInternalResourceData()) == 0;
     }
 
     static void HHVM_METHOD(Event, free)
     {
-        EventResource *EResource = FETCH_RESOURCE(this_, EventResource, s_event);
-        event_t *event = (event_t *) EResource->getInternalResource();
+        EventResourceData *event_resource_data = FETCH_RESOURCE(this_, EventResourceData, s_event);
+        event_t *event = (event_t *) event_resource_data->getInternalResourceData();
         if(event == NULL){
             raise_error("Failed to free event resource");
         }
-        EResource->setInternalResource(NULL);
+        event_resource_data->setInternalResourceData(NULL);
         event_free(event);
-        freeCB(EResource);
+        freeCB(event_resource_data);
     }
 
     static bool HHVM_METHOD(Event, pending, int64_t flags)
     {
-        EventResource *EResource = FETCH_RESOURCE(this_, EventResource, s_event);
-        return event_pending((event_t *) EResource->getInternalResource(), flags, NULL) == 0;
+        EventResourceData *event_resource_data = FETCH_RESOURCE(this_, EventResourceData, s_event);
+        return event_pending((event_t *) event_resource_data->getInternalResourceData(), flags, NULL) == 0;
     }
 
     static Array HHVM_STATIC_METHOD(Event, getSupportedMethods)
@@ -125,12 +125,12 @@ namespace HPHP
 
     static bool HHVM_METHOD(Event, set, const Object &base, const Variant &fd, int64_t what, const Object &cb, const Variant & arg) {
         short s_what = what;
-        EventResource *EResource = FETCH_RESOURCE(this_, EventResource, s_event);
-        event_t *event = (event_t *) EResource->getInternalResource();
+        EventResourceData *event_resource_data = FETCH_RESOURCE(this_, EventResourceData, s_event);
+        event_t *event = (event_t *) event_resource_data->getInternalResourceData();
         evutil_socket_t fd_r;
         event_callback_fn event_cb_fn;
-        InternalResource *EBResource = FETCH_RESOURCE(base, InternalResource, s_eventbase);
-        event_base_t *event_base = (event_base_t *)EBResource->getInternalResource();
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_eventbase);
+        event_base_t *event_base = (event_base_t *)event_base_resource_data->getInternalResourceData();
 
         if(event_is_pending(event)){
             raise_warning("Can't modify pending event");
@@ -165,20 +165,20 @@ namespace HPHP
                 raise_warning("valid PHP socket resource expected");
                 return false;
             }
-            EResource->setFd(fd.asCResRef());
+            event_resource_data->setFd(fd.asCResRef());
         }
 
-        EResource->setArg(arg);
+        event_resource_data->setArg(arg);
 
-        freeCB(EResource);
-        setCB(EResource, cb);
+        freeCB(event_resource_data);
+        setCB(event_resource_data, cb);
 
-        return event_assign(event, event_base, fd_r, s_what, event_cb_fn, (void *)EResource) == 0;
+        return event_assign(event, event_base, fd_r, s_what, event_cb_fn, (void *)event_resource_data) == 0;
     }
 
     static bool HHVM_METHOD(Event, setPriority, int64_t priority){
-        EventResource *EResource = FETCH_RESOURCE(this_, EventResource, s_event);
-        return event_priority_set((event_t *) EResource->getInternalResource(), priority) == 0;
+        EventResourceData *event_resource_data = FETCH_RESOURCE(this_, EventResourceData, s_event);
+        return event_priority_set((event_t *) event_resource_data->getInternalResourceData(), priority) == 0;
     }
 
     void eventExtension::_initEventClass()

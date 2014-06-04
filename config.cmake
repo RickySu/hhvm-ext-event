@@ -15,11 +15,12 @@ CONFIGURE_FILE(${CMAKE_CURRENT_BINARY_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DI
 include(ConfigureHNIInclude)
 
 HHVM_EXTENSION(event
-    src/resource/InternalResource.cpp
-    src/resource/EventBufferEventResource.cpp
-    src/resource/EventResource.cpp
-    src/resource/EventSSLContextResource.cpp
-    src/resource/EventHttpResource.cpp
+    src/resource/InternalResourceData.cpp
+    src/resource/EventBufferEventResourceData.cpp
+    src/resource/EventResourceData.cpp
+    src/resource/EventSSLContextResourceData.cpp
+    src/resource/EventHttpResourceData.cpp
+    src/resource/EventHttpRequestResourceData.cpp
     src/ext.cpp
     src/ext_event_base.cpp
     src/ext_event_config.cpp
@@ -28,6 +29,7 @@ HHVM_EXTENSION(event
     src/ext_event.cpp
     src/ext_event_util.cpp
     src/ext_event_http.cpp
+    src/ext_event_http_request.cpp
     src/ext_event_ssl_context
 )
 HHVM_SYSTEMLIB(event ext_event.php)

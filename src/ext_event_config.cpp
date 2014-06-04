@@ -5,41 +5,41 @@ namespace HPHP
 
     static void HHVM_METHOD(EventConfig, __construct)
     {
-        Resource resource = Resource(NEWOBJ(InternalResource(event_config_new())));
+        Resource resource = Resource(NEWOBJ(InternalResourceData(event_config_new())));
         SET_RESOURCE(this_, resource, s_eventconfig);
     }
 
     static void HHVM_METHOD(EventConfig, __destruct)
     {
-        InternalResource *ECResource = FETCH_RESOURCE(this_, InternalResource, s_eventconfig);
-        event_config_free((event_config_t *) ECResource->getInternalResource());
+        InternalResourceData *event_config_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventconfig);
+        event_config_free((event_config_t *) event_config_resource_data->getInternalResourceData());
     }
 
     static bool HHVM_METHOD(EventConfig, avoidMethod, const String& method)
     {
-        InternalResource *ECResource = FETCH_RESOURCE(this_, InternalResource, s_eventconfig);
-        return event_config_avoid_method((event_config_t *) ECResource->getInternalResource(), method.c_str()) == 0?true:false;
+        InternalResourceData *event_config_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventconfig);
+        return event_config_avoid_method((event_config_t *) event_config_resource_data->getInternalResourceData(), method.c_str()) == 0?true:false;
     }
 
     static bool HHVM_METHOD(EventConfig, requireFeatures, int64_t feature)
     {
-        InternalResource *ECResource = FETCH_RESOURCE(this_, InternalResource, s_eventconfig);
-        return event_config_require_features((event_config_t *) ECResource->getInternalResource(), feature) == 0?true:false;
+        InternalResourceData *event_config_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventconfig);
+        return event_config_require_features((event_config_t *) event_config_resource_data->getInternalResourceData(), feature) == 0?true:false;
     }
 
     static void HHVM_METHOD(EventConfig, setMaxDispatchInterval, double max_interval, int64_t max_callbacks, int64_t min_priority)
     {
 #ifdef HAVE_DISPATCH_INTERVAL_FUNCTION
         struct timeval tv;
-        InternalResource *ECResource = FETCH_RESOURCE(this_, InternalResource, s_eventconfig);
+        InternalResourceData *event_config_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_eventconfig);
 
         TIMEVAL_SET(tv, max_interval);
 
         if (max_interval > 0) {
-            event_config_set_max_dispatch_interval((event_config_t *) ECResource->getInternalResource(), &tv, max_callbacks, min_priority);
+            event_config_set_max_dispatch_interval((event_config_t *) event_config_resource_data->getInternalResourceData(), &tv, max_callbacks, min_priority);
         }
         else{
-            event_config_set_max_dispatch_interval((event_config_t *) ECResource->getInternalResource(), NULL, max_callbacks, min_priority);
+            event_config_set_max_dispatch_interval((event_config_t *) event_config_resource_data->getInternalResourceData(), NULL, max_callbacks, min_priority);
         }
 #else
         throw NotImplementedException("Available since libevent 2.1.0-alpha");

@@ -1,24 +1,24 @@
 /*
- * File:   EventHttpResource.h
+ * File:   EventHttpResourceData.h
  * Author: ricky
  *
  * Created on 2014年5月19日, 上午 9:48
  */
 
-#ifndef EVENTHTTPRESOURCE_H
-#define	EVENTHTTPRESOURCE_H
+#ifndef EventHttpResourceData_H
+#define	EventHttpResourceData_H
 
 #include <event2/event.h>
-#include "InternalResource.h"
+#include "InternalResourceData.h"
 
 namespace HPHP {
 
-    class EventHttpResource : public InternalResource {
+    class EventHttpResourceData : public InternalResourceData {
     public:
-        DECLARE_RESOURCE_ALLOCATION(EventHttpResource)
-        CLASSNAME_IS("EventHttpResource")
-        EventHttpResource(evhttp_t *event);
-        virtual ~EventHttpResource();
+        DECLARE_RESOURCE_ALLOCATION(EventHttpResourceData)
+        CLASSNAME_IS("EventHttpResourceData")
+        EventHttpResourceData(evhttp_t *event);
+        virtual ~EventHttpResourceData();
         void setCallbackArg(const Variant &arg);
         const Variant &getCallbackArg();
         void setDefaultCallbackArg(const Variant &arg);
@@ -33,5 +33,5 @@ namespace HPHP {
     };
 }
 
-#endif	/* EVENTHTTPRESOURCE_H */
+#endif	/* EventHttpResourceData_H */
 

@@ -9,7 +9,7 @@
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function setAllowedMethods(int $methods): void;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function setCallback(string $path, callable $cb, ?mixed $arg = null): void;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function setDefaultCallback(callable $cb, ?mixed $arg = null): void;
-<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function setMaxBodySize(int value): void;
-<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function setMaxHeadersSize(int value): void;
-<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function setTimeout(int value): void;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function setMaxBodySize(int $value): void;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function setMaxHeadersSize(int $value): void;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function setTimeout(int $value): void;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>}

@@ -16,7 +16,8 @@ namespace HPHP
         s_eventbuffer("EventBuffer"),
         s_event("Event"),
         s_event_ssl_context("EventSSLContext"),
-        s_eventhttp("EventHttp")
+        s_eventhttp("EventHttp"),
+        s_eventhttprequest("EventHttpRequest")
     ;
 }
 #endif	/* COMMON_H */

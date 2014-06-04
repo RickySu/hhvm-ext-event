@@ -17,7 +17,7 @@
 
 #define SET_RESOURCE(obj, resource, ctx) \
     obj->o_set(s_internal_resource, resource, ctx); \
-    resource.getTyped<InternalResource>()->setObject(obj);
+    resource.getTyped<InternalResourceData>()->setObject(obj);
 
 #define event_is_pending(e) \
         event_pending((e), EV_READ | EV_WRITE | EV_SIGNAL | EV_TIMEOUT, NULL)

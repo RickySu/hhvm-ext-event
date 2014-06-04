@@ -9,16 +9,16 @@ namespace HPHP {
         int ret = preverify_ok, err, depth;
         SSL *ssl;
         ssl  = (SSL *) X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx());
-        EventSSLContextResource *ssl_context_resource = (EventSSLContextResource *) SSL_get_ex_data(ssl, event_ssl_data_index);
+        EventSSLContextResourceData *ssl_context_resource_data = (EventSSLContextResourceData *) SSL_get_ex_data(ssl, event_ssl_data_index);
         X509_STORE_CTX_get_current_cert(ctx);
         err      = X509_STORE_CTX_get_error(ctx);
         depth    = X509_STORE_CTX_get_error_depth(ctx);
 
-        if(err == X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT && ssl_context_resource->allow_self_signed){
+        if(err == X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT && ssl_context_resource_data->allow_self_signed){
             return -1;
         }
 
-        if(depth > ssl_context_resource->verify_depth){
+        if(depth > ssl_context_resource_data->verify_depth){
             X509_STORE_CTX_set_error(ctx, X509_V_ERR_CERT_CHAIN_TOO_LONG);
             return 0;
         }
@@ -121,7 +121,7 @@ namespace HPHP {
         return NULL;
     }
 
-    ALWAYS_INLINE void set_ssl_ctx_options(SSL_CTX *ssl_ctx, const Array &options, EventSSLContextResource *ssl_context_resource){
+    ALWAYS_INLINE void set_ssl_ctx_options(SSL_CTX *ssl_ctx, const Array &options, EventSSLContextResourceData *ssl_context_resource_data){
         String cafile, capath, ciphers = "DEFAULT";
         for (ArrayIter iter(options); iter; ++iter) {
             Variant key(iter.first());
@@ -137,7 +137,7 @@ namespace HPHP {
                     break;
                 }
                 case EVENT_OPT_ALLOW_SELF_SIGNED:
-                    ssl_context_resource->allow_self_signed = options.rvalAt(key).toBooleanVal();
+                    ssl_context_resource_data->allow_self_signed = options.rvalAt(key).toBooleanVal();
                     break;
                 case EVENT_OPT_LOCAL_PK:
                     /* Skip. SSL_CTX_use_PrivateKey_file is applied in "local_cert". */
@@ -164,7 +164,7 @@ namespace HPHP {
                     break;
                 case EVENT_OPT_VERIFY_DEPTH:
                     SSL_CTX_set_verify_depth(ssl_ctx, options.rvalAt(key).toInt64Val());
-                    ssl_context_resource->verify_depth = options.rvalAt(key).toInt64Val();
+                    ssl_context_resource_data->verify_depth = options.rvalAt(key).toInt64Val();
                     break;
                 case EVENT_OPT_CIPHERS:
                     ciphers = options.rvalAt(key).toStrRef();
@@ -194,12 +194,12 @@ namespace HPHP {
             return;
         }
 
-        Resource resource = Resource(NEWOBJ(EventSSLContextResource(ssl_ctx)));
+        Resource resource = Resource(NEWOBJ(EventSSLContextResourceData(ssl_ctx)));
         SET_RESOURCE(this_, resource, s_event_ssl_context);
-        EventSSLContextResource *ssl_context_resource = FETCH_RESOURCE(this_, EventSSLContextResource, s_event_ssl_context);
+        EventSSLContextResourceData *ssl_context_resource_data = FETCH_RESOURCE(this_, EventSSLContextResourceData, s_event_ssl_context);
 
         SSL_CTX_set_options(ssl_ctx, ssl_option);
-        set_ssl_ctx_options(ssl_ctx, options, ssl_context_resource);
+        set_ssl_ctx_options(ssl_ctx, options, ssl_context_resource_data);
     }
 
     void eventExtension::_initEventSslContextClass() {

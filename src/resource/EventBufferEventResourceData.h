@@ -1,26 +1,26 @@
 /*
- * File:   EventBufferEventResource.h
+ * File:   EventBufferEventResourceData.h
  * Author: ricky
  *
  * Created on 2014年5月19日, 上午 9:48
  */
 
-#ifndef EVENTBUFFEREVENTRESOURCE_H
-#define	EVENTBUFFEREVENTRESOURCE_H
+#ifndef EventBufferEventResourceData_H
+#define	EventBufferEventResourceData_H
 
 #include <event2/event.h>
 #include <event2/util.h>
 #include <event2/bufferevent.h>
-#include "InternalResource.h"
+#include "InternalResourceData.h"
 
 namespace HPHP {
 
-    class EventBufferEventResource : public InternalResource {
+    class EventBufferEventResourceData : public InternalResourceData {
     public:
-        DECLARE_RESOURCE_ALLOCATION(EventBufferEventResource)
-        CLASSNAME_IS("EventBufferEventResource")
-        EventBufferEventResource(event_buffer_event_t *event_buffer_event, ObjectData *object);
-        virtual ~EventBufferEventResource();
+        DECLARE_RESOURCE_ALLOCATION(EventBufferEventResourceData)
+        CLASSNAME_IS("EventBufferEventResourceData")
+        EventBufferEventResourceData(event_buffer_event_t *event_buffer_event, ObjectData *object);
+        virtual ~EventBufferEventResourceData();
         void setCallback(ObjectData *readcb, ObjectData *writecb, ObjectData *eventcb);
         ObjectData *getReadCB();
         ObjectData *getWriteCB();
@@ -34,5 +34,5 @@ namespace HPHP {
     };
 }
 
-#endif	/* EVENTBUFFEREVENTRESOURCE_H */
+#endif	/* EventBufferEventResourceData_H */
 

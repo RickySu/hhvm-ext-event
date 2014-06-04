@@ -12,4 +12,5 @@
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    const int INPUT_HEADER = 1 ;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    const int OUTPUT_HEADER = 2 ;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    private ?resource $__internal_resource = null;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function __construct(?callable $callback, ?mixed $data = null): void;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>}

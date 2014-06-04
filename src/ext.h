@@ -5,10 +5,11 @@
 #include "hphp/runtime/base/socket.h"
 #include "hphp/runtime/base/thread-info.h"
 #include "hphp/runtime/vm/jit/translator-inline.h"
-#include "resource/EventBufferEventResource.h"
-#include "resource/EventResource.h"
-#include "resource/EventSSLContextResource.h"
-#include "resource/EventHttpResource.h"
+#include "resource/EventBufferEventResourceData.h"
+#include "resource/EventResourceData.h"
+#include "resource/EventSSLContextResourceData.h"
+#include "resource/EventHttpResourceData.h"
+#include "resource/EventHttpRequestResourceData.h"
 #include "h/util.h"
 #include "h/common.h"
 #include "h/use_event.h"
@@ -38,6 +39,7 @@ namespace HPHP
 #endif
 #ifdef HAVE_LIBEVENT_HTTP_SUPPORT
                 _initEventHttpClass();
+                _initEventHttpRequestClass();
 #endif
                 loadSystemlib();
             }
@@ -53,6 +55,7 @@ namespace HPHP
 #endif
 #ifdef HAVE_LIBEVENT_HTTP_SUPPORT
             void _initEventHttpClass();
+              void _initEventHttpRequestClass();
 #endif
     };
 
