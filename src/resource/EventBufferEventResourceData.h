@@ -19,7 +19,7 @@ namespace HPHP {
     public:
         DECLARE_RESOURCE_ALLOCATION(EventBufferEventResourceData)
         CLASSNAME_IS("EventBufferEventResourceData")
-        EventBufferEventResourceData(event_buffer_event_t *event_buffer_event, ObjectData *object);
+        EventBufferEventResourceData(event_buffer_event_t *event_buffer_event, ObjectData *object_data);
         virtual ~EventBufferEventResourceData();
         void setCallback(ObjectData *readcb, ObjectData *writecb, ObjectData *eventcb);
         ObjectData *getReadCB();
@@ -29,7 +29,7 @@ namespace HPHP {
         const Variant &getArg();
         ObjectData *getObjectData();
     private:
-        ObjectData *readcb, *writecb, *eventcb, *object;
+        ObjectData *readcb, *writecb, *eventcb, *object_data;
         const Variant *arg;
     };
 }

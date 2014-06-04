@@ -19,7 +19,7 @@ namespace HPHP {
     public:
         DECLARE_RESOURCE_ALLOCATION(EventResourceData)
         CLASSNAME_IS("EventResourceData")
-        EventResourceData(event_t *event, ObjectData *object);
+        EventResourceData(event_t *event, ObjectData *object_data);
         virtual ~EventResourceData();
         void setCallback(ObjectData *cb);
         ObjectData *getCallback();
@@ -29,7 +29,7 @@ namespace HPHP {
         const Resource &getFd();
         ObjectData *getObjectData();
     private:
-        ObjectData *cb, *object;
+        ObjectData *cb, *object_data;
         const Variant *arg;
         const Resource *fd;
     };

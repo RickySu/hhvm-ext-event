@@ -21,11 +21,11 @@ namespace HPHP {
         this->resource = resource;
     }
     void InternalResourceData::setObject(const Object &obj) {
-        this->object = &obj;
+        this->object_data = &obj;
     }
 
     const Object *InternalResourceData::getObject() {
-        return object;
+        return object_data;
     }
 
     InternalResourceData::~InternalResourceData() {

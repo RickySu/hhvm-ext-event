@@ -3,14 +3,24 @@
 #ifdef HAVE_LIBEVENT_HTTP_SUPPORT
 namespace HPHP {
 
+    ALWAYS_INLINE Object makeEventHttpRequestObject(evhttp_request_t *request) {
+        Object http_request = ObjectData::newInstance(Unit::lookupClass(String("EventHttpRequest").get()));
+        Resource resource = Resource(NEWOBJ(EventHttpRequestResourceData(http_request.get())));
+        SET_RESOURCE(http_request, resource, s_eventhttprequest);
+        EventHttpRequestResourceData *resource_data = FETCH_RESOURCE(http_request, EventHttpRequestResourceData, s_eventhttprequest);
+        evhttp_request_own(request);
+        resource_data->setInternalResourceData((void *) request);
+        return http_request;
+    }
+
     static void event_http_cb(evhttp_request_t *request, void *data) {
-        EventResourceData *event_resource_data = (EventResourceData *) data;
-        vm_call_user_func(Object(event_resource_data->getCallback()), make_packed_array(event_resource_data->getArg()));
+        EventHttpResourceData *resource_data = (EventHttpResourceData *) data;
+        vm_call_user_func(Object(resource_data->getCallback()), make_packed_array(makeEventHttpRequestObject(request), resource_data->getCallbackArg()));
     }
 
     static void event_http_default_cb(evhttp_request_t *request, void *data) {
-        EventResourceData *event_resource_data = (EventResourceData *) data;
-        vm_call_user_func(Object(event_resource_data->getCallback()), make_packed_array(event_resource_data->getArg()));
+        EventHttpResourceData *resource_data = (EventHttpResourceData *) data;
+        vm_call_user_func(Object(resource_data->getDefaultCallback()), make_packed_array(makeEventHttpRequestObject(request), resource_data->getDefaultCallbackArg()));
     }
 
     static void HHVM_METHOD(EventHttp, __construct, const Object &base) {
@@ -18,6 +28,7 @@ namespace HPHP {
         InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_eventbase);
         event_base_t *event_base = (event_base_t *)event_base_resource_data->getInternalResourceData();
         http = evhttp_new(event_base);
+
         if(!http){
             raise_error("Failed to allocate space for new HTTP server(evhttp_new)");
         }
@@ -62,8 +73,7 @@ namespace HPHP {
     }
 
     static void HHVM_METHOD(EventHttp, setCallback, const String &path, const Object &cb, const Variant &arg) {
-        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_eventhttp);
-        resource_data->setCallback(cb.get());
+        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_eventhttp);        ;
         cb.get()->incRefCount();
         resource_data->setCallback(cb.get());
         resource_data->setCallbackArg(arg);
@@ -72,10 +82,9 @@ namespace HPHP {
 
     static void HHVM_METHOD(EventHttp, setDefaultCallback, const Object &cb, const Variant &arg) {
         EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_eventhttp);
-        resource_data->setCallback(cb.get());
         cb.get()->incRefCount();
-        resource_data->setCallback(cb.get());
-        resource_data->setCallbackArg(arg);
+        resource_data->setDefaultCallback(cb.get());
+        resource_data->setDefaultCallbackArg(arg);
         evhttp_set_gencb((evhttp_t *)resource_data->getInternalResourceData(), event_http_default_cb, (void *) resource_data);
     }
 

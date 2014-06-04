@@ -17,14 +17,15 @@ namespace HPHP {
     public:
         DECLARE_RESOURCE_ALLOCATION(EventHttpRequestResourceData)
         CLASSNAME_IS("EventHttpRequestResourceData")
-        EventHttpRequestResourceData();
+        EventHttpRequestResourceData(ObjectData *object_data);
         virtual ~EventHttpRequestResourceData();
         void setCallbackArg(const Variant &arg);
         const Variant &getCallbackArg();
         void setCallback(ObjectData *cb);
         ObjectData *getCallback();
+        ObjectData *getObjectData();
     private:
-        ObjectData *cb;
+        ObjectData *cb, *object_data;;
         const Variant *arg;
     };
 }

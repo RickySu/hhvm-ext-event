@@ -11,7 +11,12 @@ namespace HPHP {
 
     IMPLEMENT_OBJECT_ALLOCATION(EventHttpRequestResourceData)
 
-    EventHttpRequestResourceData::EventHttpRequestResourceData():InternalResourceData() {
+    EventHttpRequestResourceData::EventHttpRequestResourceData(ObjectData *object_data):InternalResourceData() {
+        this->object_data = object_data;
+    }
+
+    ObjectData *EventHttpRequestResourceData::getObjectData(){
+        return this->object_data;
     }
 
     void EventHttpRequestResourceData::setCallback(ObjectData *cb)

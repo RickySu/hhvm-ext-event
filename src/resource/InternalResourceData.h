@@ -27,7 +27,7 @@ namespace HPHP {
         const Object *getObject();
     private:
         void *resource;
-        const Object *object;
+        const Object *object_data;
     };
 }
 #endif	/* EVENTBASERESOURCE_H */
