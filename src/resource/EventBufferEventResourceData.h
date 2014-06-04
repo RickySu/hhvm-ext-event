@@ -28,6 +28,7 @@ namespace HPHP {
         void setArg(const Variant &arg);
         const Variant &getArg();
         ObjectData *getObjectData();
+        bool isInternal = false;
     private:
         ObjectData *readcb, *writecb, *eventcb, *object_data;
         const Variant *arg;

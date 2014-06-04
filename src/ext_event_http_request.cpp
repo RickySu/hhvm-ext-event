@@ -2,6 +2,13 @@
 #ifdef HAVE_LIBEVENT_HTTP_SUPPORT
 namespace HPHP {
 
+    ALWAYS_INLINE evkeyvalq_t *get_http_req_headers(evhttp_request_t *request, int64_t type){
+        if (type == EVENT_REQ_HEADER_OUTPUT){
+            return evhttp_request_get_output_headers(request);
+        }
+        return evhttp_request_get_input_headers(request);
+    }
+
     static void event_http_request_cb(evhttp_request_t *request, void *data) {
         EventHttpRequestResourceData *resource_data = (EventHttpRequestResourceData *) data;
         evhttp_request_own((evhttp_request_t *) resource_data->getInternalResourceData());
@@ -23,6 +30,11 @@ namespace HPHP {
 
     static void HHVM_METHOD(EventHttpRequest, free) {
         EventHttpRequestResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+
+        if(resource_data->isInternal){
+            return;
+        }
+
         evhttp_request_free((evhttp_request_t *) resource_data->getInternalResourceData());
     }
 
@@ -32,7 +44,7 @@ namespace HPHP {
     }
 
     static void HHVM_METHOD(EventHttpRequest, clearHeaders) {
-        struct evkeyvalq *out_headers;
+        evkeyvalq_t *out_headers;
         EventHttpRequestResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
         out_headers = evhttp_request_get_output_headers((evhttp_request_t *) resource_data->getInternalResourceData());
         evhttp_clear_headers(out_headers);
@@ -57,6 +69,52 @@ namespace HPHP {
         evhttp_send_reply((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData(), code, reason.c_str(), ((event_buffer_t *) event_buffer_resource_data->getInternalResourceData()));
     }
 
+    static String HHVM_METHOD(EventHttpRequest, findHeader, const String &key, int64_t type) {
+        evkeyvalq_t *headers;
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+
+        if (type & ~(EVENT_REQ_HEADER_INPUT | EVENT_REQ_HEADER_OUTPUT)) {
+            return false;
+        }
+
+        headers = get_http_req_headers((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData(), type);
+        const char *val = evhttp_find_header(headers, key.c_str());
+
+        if(val == NULL){
+            return String();
+        }
+
+        return StringData::Make(val, CopyString);
+    }
+
+    static Variant HHVM_METHOD(EventHttpRequest, getEventBufferEvent) {
+        evhttp_connection_t *conn;
+        event_buffer_event_t *bevent;
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+
+        if((conn = evhttp_request_get_connection((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData())) == NULL){
+            return Variant();
+        }
+
+        if((bevent = evhttp_connection_get_bufferevent(conn)) == NULL){
+            return Variant();
+        }
+
+        String ClassName("EventBufferEvent");
+        Object event_buffer_event = ObjectData::newInstance(Unit::lookupClass(ClassName.get()));
+        Resource resource;
+        resource = Resource(NEWOBJ(EventBufferEventResourceData(bevent, event_buffer_event.get())));
+        SET_RESOURCE(event_buffer_event, resource, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(event_buffer_event, EventBufferEventResourceData, s_eventbufferevent);
+        event_buffer_event_resource_data->isInternal = true;
+        return event_buffer_event;
+    }
+
+    static int64_t HHVM_METHOD(EventHttpRequest, getCommand) {
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+        return evhttp_request_get_command((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData());
+    }
+
     void eventExtension::_initEventHttpRequestClass() {
         HHVM_ME(EventHttpRequest, __construct);
         HHVM_ME(EventHttpRequest, free);
@@ -64,6 +122,9 @@ namespace HPHP {
         HHVM_ME(EventHttpRequest, clearHeaders);
         HHVM_ME(EventHttpRequest, closeConnection);
         HHVM_ME(EventHttpRequest, sendReply);
+        HHVM_ME(EventHttpRequest, findHeader);
+        HHVM_ME(EventHttpRequest, getEventBufferEvent);
+        HHVM_ME(EventHttpRequest, getCommand);
     }
 }
 #endif

@@ -253,7 +253,7 @@ namespace HPHP {
         bufferevent_ssl_renegotiate((event_buffer_event_t *) event_buffer_event_resource_data->getInternalResourceData());
     }
 
-    static Object HHVM_STATIC_METHOD(EventBufferEvent, sslFilter, const Object &base, const Object &underlying, const Object ctx, int64_t state, int64_t options) {
+    static Variant HHVM_STATIC_METHOD(EventBufferEvent, sslFilter, const Object &base, const Object &underlying, const Object ctx, int64_t state, int64_t options) {
         SSL *ssl;
         event_buffer_event_t *bevent;
         InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_eventbase);
@@ -262,26 +262,30 @@ namespace HPHP {
 
         if (!is_valid_ssl_state(state)) {
             raise_warning("Invalid state specified");
-            return NULL;
+            return Variant();
         }
 
         if(!(ssl = SSL_new((SSL_CTX *) event_ssl_context_resource_data->getInternalResourceData()))){
             raise_warning("Event: Failed creating SSL handle");
-            return NULL;
+            return Variant();
         }
 
         if((bevent = bufferevent_openssl_filter_new((event_base_t *) event_base_resource_data->getInternalResourceData(), (event_buffer_event_t *) event_buffer_event_resource_data->getInternalResourceData(), ssl, (bufferevent_ssl_state) state, options)) == NULL){
             raise_warning("Failed to allocate bufferevent filter");
-            return NULL;
+            return Variant();
         }
 
         String ClassName("EventBufferEvent");
         Object event_buffer_event = ObjectData::newInstance(Unit::lookupClass(ClassName.get()));
-        initEventBufferEvent(bevent, event_buffer_event, Object(), Object(), Object(), Variant());
+        Resource resource;
+        resource = Resource(NEWOBJ(EventBufferEventResourceData(bevent, event_buffer_event.get())));
+        SET_RESOURCE(event_buffer_event, resource, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data_new = FETCH_RESOURCE(event_buffer_event, EventBufferEventResourceData, s_eventbufferevent);
+        event_buffer_event_resource_data_new->isInternal = true;
         return event_buffer_event;
     }
 
-    static Object HHVM_STATIC_METHOD(EventBufferEvent, sslSocket, const Object &base, const Resource &socket, const Object ctx, int64_t state, int64_t options) {
+    static Variant HHVM_STATIC_METHOD(EventBufferEvent, sslSocket, const Object &base, const Resource &socket, const Object ctx, int64_t state, int64_t options) {
         evutil_socket_t fd;
         SSL *ssl;
         event_buffer_event_t *bevent;
@@ -290,7 +294,7 @@ namespace HPHP {
 
         if (!is_valid_ssl_state(state)) {
             raise_warning("Invalid state specified");
-            return NULL;
+            return Variant();
         }
 
         if(socket.isNull()){
@@ -308,21 +312,24 @@ namespace HPHP {
 
         if(!(ssl = SSL_new((SSL_CTX *) event_ssl_context_resource_data->getInternalResourceData()))){
             raise_warning("Event: Failed creating SSL handle");
-            return NULL;
+            return Variant();
         }
 
         SSL_set_ex_data(ssl, event_ssl_data_index, event_ssl_context_resource_data);
 
         if((bevent = bufferevent_openssl_socket_new((event_base_t *) event_base_resource_data->getInternalResourceData(), fd, ssl, (bufferevent_ssl_state) state, options))){
             raise_warning("Failed to allocate bufferevent ssl socket");
-            return NULL;
+            return Variant();
         }
 
         String ClassName("EventBufferEvent");
         Object event_buffer_event = ObjectData::newInstance(Unit::lookupClass(ClassName.get()));
-        initEventBufferEvent(bevent, event_buffer_event, Object(), Object(), Object(), Variant());
+        Resource resource;
+        resource = Resource(NEWOBJ(EventBufferEventResourceData(bevent, event_buffer_event.get())));
+        SET_RESOURCE(event_buffer_event, resource, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(event_buffer_event, EventBufferEventResourceData, s_eventbufferevent);
+        event_buffer_event_resource_data->isInternal = true;
         return event_buffer_event;
-
     }
 
 #endif

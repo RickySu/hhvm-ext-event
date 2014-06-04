@@ -10,6 +10,7 @@ namespace HPHP {
         EventHttpRequestResourceData *resource_data = FETCH_RESOURCE(http_request, EventHttpRequestResourceData, s_eventhttprequest);
         evhttp_request_own(request);
         resource_data->setInternalResourceData((void *) request);
+        resource_data->isInternal = true;
         return http_request;
     }
 

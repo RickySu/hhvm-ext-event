@@ -18,4 +18,7 @@
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function clearHeaders(): void;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function closeConnection(): void;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function sendReply(int $code, string $reason, ?EventBuffer $buf = null): void;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function findHeader(string $key, int $type): string;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function getEventBufferEvent(): ?EventBufferEvent;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function getCommand(): int;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>}
