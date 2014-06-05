@@ -25,6 +25,7 @@ namespace HPHP {
         void setInternalResourceData(void *resource);
         void setObject(const Object &obj);
         const Object *getObject();
+        bool isInternal = false;
     private:
         void *resource;
         const Object *object_data;

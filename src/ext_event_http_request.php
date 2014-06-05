@@ -21,4 +21,13 @@
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function findHeader(string $key, int $type): string;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function getEventBufferEvent(): ?EventBufferEvent;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function getCommand(): int;
+//<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function getConnection(): ?EventHttpConnection;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function getHost(): string;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function getInputBuffer(): ?EventBuffer;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function getInputHeaders(): ?array<string, string>;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function getOutputBuffer(): ?EventBuffer;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function getOutputHeaders(): ?array<string, string>;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function getResponseCode(): int;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function getUri(): string;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function removeHeader(string $key, int $type): bool;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>}

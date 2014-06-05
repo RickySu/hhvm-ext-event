@@ -20,9 +20,11 @@
 
 #ifdef HAVE_LIBEVENT_HTTP_SUPPORT
     #include <event2/http.h>
+    #include <event2/keyvalq_struct.h>
     typedef struct evhttp evhttp_t;
     typedef struct evhttp_request evhttp_request_t;
     typedef struct evkeyvalq evkeyvalq_t;
+    typedef struct evkeyval evkeyval_t;
     typedef struct evhttp_connection evhttp_connection_t;
     #define EVENT_REQ_HEADER_INPUT 1
     #define EVENT_REQ_HEADER_OUTPUT 2

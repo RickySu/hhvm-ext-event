@@ -115,6 +115,100 @@ namespace HPHP {
         return evhttp_request_get_command((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData());
     }
 
+    static String HHVM_METHOD(EventHttpRequest, getHost) {
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+        return StringData::Make(evhttp_request_get_host((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData()), CopyString);
+    }
+
+    static Variant HHVM_METHOD(EventHttpRequest, getInputBuffer) {
+        event_buffer_t *buf;
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+
+        if((buf = evhttp_request_get_input_buffer((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData())) == NULL){
+            return Variant();
+        }
+
+        Object event_buffer = ObjectData::newInstance(Unit::lookupClass(String("EventBuffer").get()));
+        Resource resource = Resource(NEWOBJ(InternalResourceData(buf)));
+        SET_RESOURCE(event_buffer, resource, s_eventbuffer);
+        InternalResourceData *resource_data = FETCH_RESOURCE(event_buffer, InternalResourceData, s_eventbuffer);
+        resource_data->isInternal = true;
+        return event_buffer;
+    }
+
+    static Array HHVM_METHOD(EventHttpRequest, getInputHeaders) {
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+        evkeyvalq_t *headers;
+        evkeyval_t  *header;
+
+        Array ret = Array::Create();
+
+        if((headers = evhttp_request_get_input_headers((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData())) == NULL){
+            return ret;
+        }
+
+        header = headers->tqh_first;
+
+        while(header){
+            ret.set(String(header->key, CopyString), String(header->value, CopyString));
+            header = header->next.tqe_next;
+        }
+        return ret;
+    }
+
+    static Variant HHVM_METHOD(EventHttpRequest, getOutputBuffer) {
+        event_buffer_t *buf;
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+
+        if((buf = evhttp_request_get_output_buffer((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData())) == NULL){
+            return Variant();
+        }
+
+        Object event_buffer = ObjectData::newInstance(Unit::lookupClass(String("EventBuffer").get()));
+        Resource resource = Resource(NEWOBJ(InternalResourceData(buf)));
+        SET_RESOURCE(event_buffer, resource, s_eventbuffer);
+        InternalResourceData *resource_data = FETCH_RESOURCE(event_buffer, InternalResourceData, s_eventbuffer);
+        resource_data->isInternal = true;
+        return event_buffer;
+    }
+
+    static Array HHVM_METHOD(EventHttpRequest, getOutputHeaders) {
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+        evkeyvalq_t *headers;
+        evkeyval_t  *header;
+
+        Array ret = Array::Create();
+
+        if((headers = evhttp_request_get_output_headers((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData())) == NULL){
+            return ret;
+        }
+
+        header = headers->tqh_first;
+
+        while(header){
+            ret.set(String(header->key, CopyString), String(header->value, CopyString));
+            header = header->next.tqe_next;
+        }
+        return ret;
+    }
+
+    static int64_t HHVM_METHOD(EventHttpRequest, getResponseCode) {
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+        return evhttp_request_get_response_code((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData());
+    }
+
+    static String HHVM_METHOD(EventHttpRequest, getUri) {
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+        return StringData::Make(evhttp_request_get_uri((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData()), CopyString);
+    }
+
+    static bool HHVM_METHOD(EventHttpRequest, removeHeader, const String &key, int64_t type) {
+        evkeyvalq_t *headers;
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+        headers = get_http_req_headers((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData(), type);
+        return evhttp_remove_header(headers, key.c_str()) == 0;
+    }
+
     void eventExtension::_initEventHttpRequestClass() {
         HHVM_ME(EventHttpRequest, __construct);
         HHVM_ME(EventHttpRequest, free);
@@ -125,6 +219,14 @@ namespace HPHP {
         HHVM_ME(EventHttpRequest, findHeader);
         HHVM_ME(EventHttpRequest, getEventBufferEvent);
         HHVM_ME(EventHttpRequest, getCommand);
+        HHVM_ME(EventHttpRequest, getHost);
+        HHVM_ME(EventHttpRequest, getInputBuffer);
+        HHVM_ME(EventHttpRequest, getInputHeaders);
+        HHVM_ME(EventHttpRequest, getOutputBuffer);
+        HHVM_ME(EventHttpRequest, getOutputHeaders);
+        HHVM_ME(EventHttpRequest, getResponseCode);
+        HHVM_ME(EventHttpRequest, getUri);
+        HHVM_ME(EventHttpRequest, removeHeader);
     }
 }
 #endif

@@ -24,7 +24,6 @@ namespace HPHP {
         void setCallback(ObjectData *cb);
         ObjectData *getCallback();
         ObjectData *getObjectData();
-        bool isInternal = false;
     private:
         ObjectData *cb, *object_data;;
         const Variant *arg;
