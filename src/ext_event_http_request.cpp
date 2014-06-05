@@ -230,6 +230,13 @@ namespace HPHP {
         evhttp_send_reply_end((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData());
     }
 
+    static String HHVM_METHOD(EventHttpRequest, addHeader, const String &key, const String &value, int64_t type) {
+        evkeyvalq_t *headers;
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+        headers = get_http_req_headers((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData(), type);
+        return evhttp_add_header(headers, key.c_str(), value.c_str());
+    }
+
     void eventExtension::_initEventHttpRequestClass() {
         HHVM_ME(EventHttpRequest, __construct);
         HHVM_ME(EventHttpRequest, free);
@@ -252,6 +259,7 @@ namespace HPHP {
         HHVM_ME(EventHttpRequest, sendReplyStart);
         HHVM_ME(EventHttpRequest, sendReplyChunk);
         HHVM_ME(EventHttpRequest, sendReplyEnd);
+        HHVM_ME(EventHttpRequest, addHeader);
     }
 }
 #endif

@@ -13,6 +13,7 @@
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    const int OUTPUT_HEADER = 2 ;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    private ?resource $__internal_resource = null;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function __construct(?callable $callback, ?mixed $data = null): void;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function addHeader(string $key, string $value, int $type): bool;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function free(): void;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function cancel(): void;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function clearHeaders(): void;
