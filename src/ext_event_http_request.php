@@ -30,4 +30,8 @@
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function getResponseCode(): int;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function getUri(): string;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function removeHeader(string $key, int $type): bool;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function sendError(int $error, ?string $reason = null): void;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function sendReplyStart(int $code, string $reason): void;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function sendReplyChunk(EventBuffer $buf): void;
+<*HAVE_LIBEVENT_HTTP_SUPPORT*>    <<__Native>> function sendReplyEnd(): void;
 <*HAVE_LIBEVENT_HTTP_SUPPORT*>}

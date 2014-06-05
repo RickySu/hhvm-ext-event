@@ -66,7 +66,7 @@ namespace HPHP {
             return;
         }
         InternalResourceData *event_buffer_resource_data = FETCH_RESOURCE(buf, InternalResourceData, s_eventbuffer);
-        evhttp_send_reply((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData(), code, reason.c_str(), ((event_buffer_t *) event_buffer_resource_data->getInternalResourceData()));
+        evhttp_send_reply((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData(), code, reason.c_str(), (event_buffer_t *) event_buffer_resource_data->getInternalResourceData());
     }
 
     static String HHVM_METHOD(EventHttpRequest, findHeader, const String &key, int64_t type) {
@@ -209,6 +209,27 @@ namespace HPHP {
         return evhttp_remove_header(headers, key.c_str()) == 0;
     }
 
+    static void HHVM_METHOD(EventHttpRequest, sendError, int64_t error, const String &reason) {
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+        evhttp_send_error((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData(), error, reason.isNull()?NULL:reason.c_str());
+    }
+
+    static void HHVM_METHOD(EventHttpRequest, sendReplyStart, int64_t code, const String &reason) {
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+        evhttp_send_reply_start((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData(), code, reason.c_str());
+    }
+
+    static void HHVM_METHOD(EventHttpRequest, sendReplyChunk, const Object &buf) {
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+        InternalResourceData *event_buffer_resource_data = FETCH_RESOURCE(buf, InternalResourceData, s_eventbuffer);
+        evhttp_send_reply_chunk((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData(), (event_buffer_t *) event_buffer_resource_data->getInternalResourceData());
+    }
+
+    static void HHVM_METHOD(EventHttpRequest, sendReplyEnd) {
+        EventHttpRequestResourceData *event_http_request_resource_data = FETCH_RESOURCE(this_, EventHttpRequestResourceData, s_eventhttprequest);
+        evhttp_send_reply_end((evhttp_request_t *) event_http_request_resource_data->getInternalResourceData());
+    }
+
     void eventExtension::_initEventHttpRequestClass() {
         HHVM_ME(EventHttpRequest, __construct);
         HHVM_ME(EventHttpRequest, free);
@@ -227,6 +248,10 @@ namespace HPHP {
         HHVM_ME(EventHttpRequest, getResponseCode);
         HHVM_ME(EventHttpRequest, getUri);
         HHVM_ME(EventHttpRequest, removeHeader);
+        HHVM_ME(EventHttpRequest, sendError);
+        HHVM_ME(EventHttpRequest, sendReplyStart);
+        HHVM_ME(EventHttpRequest, sendReplyChunk);
+        HHVM_ME(EventHttpRequest, sendReplyEnd);
     }
 }
 #endif
