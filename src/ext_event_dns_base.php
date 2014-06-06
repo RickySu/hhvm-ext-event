@@ -15,4 +15,5 @@
 <*HAVE_LIBEVENT_DNS_SUPPORT*>    <<__Native>> function loadHosts(string $hosts): bool;
 <*HAVE_LIBEVENT_DNS_SUPPORT*>    <<__Native>> function parseResolvConf(int $flags, string $filename): bool;
 <*HAVE_LIBEVENT_DNS_SUPPORT*>    <<__Native>> function setOption(string $option, string $value): bool;
+<*HAVE_LIBEVENT_DNS_SUPPORT*>    <<__Native>> function setSearchNdots(int $ndots): void;
 <*HAVE_LIBEVENT_DNS_SUPPORT*>}

@@ -72,6 +72,11 @@ namespace HPHP {
         return evdns_base_set_option((evdns_base_t *) event_dns_base_resource_data->getInternalResourceData(), option.c_str(), value.c_str()) == 0;
     }
 
+    static void HHVM_METHOD(EventDNSBase, setSearchNdots, int64_t ndots) {
+        InternalResourceData *event_dns_base_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_event_dns_base);
+        evdns_base_search_ndots_set((evdns_base_t *) event_dns_base_resource_data->getInternalResourceData(), ndots);
+    }
+
     void eventExtension::_initEventDNSBaseClass() {
         HHVM_ME(EventDNSBase, __construct);
         HHVM_ME(EventDNSBase, addNameserverIp);
@@ -81,6 +86,7 @@ namespace HPHP {
         HHVM_ME(EventDNSBase, loadHosts);
         HHVM_ME(EventDNSBase, parseResolvConf);
         HHVM_ME(EventDNSBase, setOption);
+        HHVM_ME(EventDNSBase, setSearchNdots);
     }
 }
 #endif
