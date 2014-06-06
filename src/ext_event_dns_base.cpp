@@ -67,6 +67,11 @@ namespace HPHP {
         return true;
     }
 
+    static bool HHVM_METHOD(EventDNSBase, setOption, const String &option, const String &value) {
+        InternalResourceData *event_dns_base_resource_data = FETCH_RESOURCE(this_, InternalResourceData, s_event_dns_base);
+        return evdns_base_set_option((evdns_base_t *) event_dns_base_resource_data->getInternalResourceData(), option.c_str(), value.c_str()) == 0;
+    }
+
     void eventExtension::_initEventDNSBaseClass() {
         HHVM_ME(EventDNSBase, __construct);
         HHVM_ME(EventDNSBase, addNameserverIp);
@@ -75,6 +80,7 @@ namespace HPHP {
         HHVM_ME(EventDNSBase, countNameservers);
         HHVM_ME(EventDNSBase, loadHosts);
         HHVM_ME(EventDNSBase, parseResolvConf);
+        HHVM_ME(EventDNSBase, setOption);
     }
 }
 #endif
