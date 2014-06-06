@@ -69,22 +69,22 @@ namespace HPHP {
     ALWAYS_INLINE void initEventBufferEvent(event_buffer_event_t *bevent, const Object &event_buffer_event, const Object &readcb, const Object &writecb, const Object &eventcb, const Variant &arg) {
         Resource resource;
         resource = Resource(NEWOBJ(EventBufferEventResourceData(bevent, event_buffer_event.get())));
-        SET_RESOURCE(event_buffer_event, resource, s_eventbufferevent);
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(event_buffer_event, EventBufferEventResourceData, s_eventbufferevent);
+        SET_RESOURCE(event_buffer_event, resource, s_event_bufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(event_buffer_event, EventBufferEventResourceData, s_event_bufferevent);
         event_buffer_event_resource_data->setArg(arg);
         setCB(event_buffer_event_resource_data, readcb, writecb, eventcb);
         Object inputBuffer = makeObject("EventBuffer");
         Resource inputBufferResource = Resource(NEWOBJ(InternalResourceData(evbuffer_new())));
-        event_buffer_event->o_set(s_eventbufferevent_input, inputBuffer, s_eventbufferevent);
+        event_buffer_event->o_set(s_event_bufferevent_input, inputBuffer, s_event_bufferevent);
         Object outputBuffer = makeObject("EventBuffer");
         Resource outputBufferResource = Resource(NEWOBJ(InternalResourceData(evbuffer_new())));
-        event_buffer_event->o_set(s_eventbufferevent_output, outputBuffer, s_eventbufferevent);
+        event_buffer_event->o_set(s_event_bufferevent_output, outputBuffer, s_event_bufferevent);
     }
 
     static void HHVM_METHOD(EventBufferEvent, __construct, const Object &base, const Resource &socket, int64_t options, const Object &readcb, const Object &writecb, const Object &eventcb, const Variant &arg) {
         evutil_socket_t fd;
         event_buffer_event_t *bevent;
-        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_eventbase);
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_event_base);
         event_base_t *event_base = (event_base_t *)event_base_resource_data->getInternalResourceData();
         if(socket.isNull()){
             fd = -1;
@@ -107,7 +107,7 @@ namespace HPHP {
     }
 
     static void HHVM_METHOD(EventBufferEvent, free) {
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
         event_buffer_event_t *bev = (event_buffer_event_t*) event_buffer_event_resource_data->getInternalResourceData();
         if(bev == NULL){
             raise_error("Failed to free bufferevent resource");
@@ -118,17 +118,17 @@ namespace HPHP {
     }
 
     static bool HHVM_METHOD(EventBufferEvent, enable, int64_t events) {
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
         return bufferevent_enable((event_buffer_event_t*) event_buffer_event_resource_data->getInternalResourceData(), events) == 0 ? true:false;
     }
 
     static bool HHVM_METHOD(EventBufferEvent, disable, int64_t events) {
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
         return bufferevent_disable((event_buffer_event_t*) event_buffer_event_resource_data->getInternalResourceData(), events) == 0 ? true:false;
     }
 
     static int64_t HHVM_METHOD(EventBufferEvent, getEnabled) {
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
         return bufferevent_get_enabled((event_buffer_event_t*) event_buffer_event_resource_data->getInternalResourceData());
     }
 
@@ -136,7 +136,7 @@ namespace HPHP {
         struct sockaddr_storage  ss;
         int ss_len   = sizeof(ss);
         memset(&ss, 0, sizeof(ss));
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
 
 #ifdef HAVE_SYS_UN_H
         if(strncasecmp(addr.get()->data(), s_domain_socket_prefix.get()->data(), s_domain_socket_prefix.size())){
@@ -160,7 +160,7 @@ namespace HPHP {
     static Variant HHVM_METHOD(EventBufferEvent, read, int64_t size) {
         size_t read_size;
         char *data = new char[size];
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
         read_size = bufferevent_read((event_buffer_event_t *) event_buffer_event_resource_data->getInternalResourceData(), (void *)data, size);
 
         if(read_size == 0){
@@ -174,19 +174,19 @@ namespace HPHP {
     }
 
     static bool HHVM_METHOD(EventBufferEvent, setPriority, int64_t priority) {
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
         return bufferevent_priority_set((event_buffer_event_t *) event_buffer_event_resource_data->getInternalResourceData(), priority) == 0;
     }
 
     static void HHVM_METHOD(EventBufferEvent, setCallbacks, const Object &readcb, const Object &writecb, const Object &eventcb, const Variant &arg) {
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
         freeCB(event_buffer_event_resource_data);
         event_buffer_event_resource_data->setArg(arg);
         setCB(event_buffer_event_resource_data, readcb, writecb, eventcb);
     }
 
     static bool HHVM_METHOD(EventBufferEvent, setTimeouts, double timeout_read, double timeout_write) {
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
         struct timeval tv_read;
         struct timeval tv_write;
         TIMEVAL_SET(tv_read, timeout_read);
@@ -195,30 +195,30 @@ namespace HPHP {
     }
 
     static void HHVM_METHOD(EventBufferEvent, setWatermark, int64_t events, int64_t lowmark, int64_t highmark) {
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
         bufferevent_setwatermark((event_buffer_event_t *) event_buffer_event_resource_data->getInternalResourceData(), events, lowmark, highmark);
     }
 
     static bool HHVM_METHOD(EventBufferEvent, write, const String &data) {
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
         return bufferevent_write((event_buffer_event_t *) event_buffer_event_resource_data->getInternalResourceData(), data.c_str(), data.size()) == 0;
     }
 
     static bool HHVM_METHOD(EventBufferEvent, writeBuffer, const Object &buf) {
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
-        InternalResourceData *resource_src = FETCH_RESOURCE(buf, InternalResourceData, s_eventbuffer);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
+        InternalResourceData *resource_src = FETCH_RESOURCE(buf, InternalResourceData, s_event_buffer);
         return bufferevent_write_buffer((event_buffer_event_t *) event_buffer_event_resource_data->getInternalResourceData(), (event_buffer_t *) resource_src->getInternalResourceData()) == 0;
     }
 
     static bool HHVM_METHOD(EventBufferEvent, readBuffer, const Object &buf) {
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
-        InternalResourceData *resource_src = FETCH_RESOURCE(buf, InternalResourceData, s_eventbuffer);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
+        InternalResourceData *resource_src = FETCH_RESOURCE(buf, InternalResourceData, s_event_buffer);
         return bufferevent_read_buffer((event_buffer_event_t *) event_buffer_event_resource_data->getInternalResourceData(), (event_buffer_t *) resource_src->getInternalResourceData()) == 0;
     }
 
     static Variant HHVM_STATIC_METHOD(EventBufferEvent, createPair, const Object &base, int64_t options) {
         event_buffer_event_t *bevent_pair[2];
-        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_eventbase);
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_event_base);
         event_base_t *event_base = (event_base_t *)event_base_resource_data->getInternalResourceData();
 
         if(bufferevent_pair_new(event_base, options, bevent_pair)){
@@ -240,7 +240,7 @@ namespace HPHP {
     static String HHVM_METHOD(EventBufferEvent, sslError) {
         unsigned long e;
         char buf[512];
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
         e = bufferevent_get_openssl_error((event_buffer_event_t *) event_buffer_event_resource_data->getInternalResourceData());
         if(e){
             return StringData::Make(ERR_error_string(e, buf));
@@ -249,15 +249,15 @@ namespace HPHP {
     }
 
     static void HHVM_METHOD(EventBufferEvent, sslRenegotiate) {
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_eventbufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(this_, EventBufferEventResourceData, s_event_bufferevent);
         bufferevent_ssl_renegotiate((event_buffer_event_t *) event_buffer_event_resource_data->getInternalResourceData());
     }
 
     static Variant HHVM_STATIC_METHOD(EventBufferEvent, sslFilter, const Object &base, const Object &underlying, const Object ctx, int64_t state, int64_t options) {
         SSL *ssl;
         event_buffer_event_t *bevent;
-        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_eventbase);
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(underlying, EventBufferEventResourceData, s_eventbufferevent);
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_event_base);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(underlying, EventBufferEventResourceData, s_event_bufferevent);
         EventSSLContextResourceData *event_ssl_context_resource_data = FETCH_RESOURCE(underlying, EventSSLContextResourceData, s_event_ssl_context);
 
         if (!is_valid_ssl_state(state)) {
@@ -279,8 +279,8 @@ namespace HPHP {
         Object event_buffer_event = ObjectData::newInstance(Unit::lookupClass(ClassName.get()));
         Resource resource;
         resource = Resource(NEWOBJ(EventBufferEventResourceData(bevent, event_buffer_event.get())));
-        SET_RESOURCE(event_buffer_event, resource, s_eventbufferevent);
-        EventBufferEventResourceData *event_buffer_event_resource_data_new = FETCH_RESOURCE(event_buffer_event, EventBufferEventResourceData, s_eventbufferevent);
+        SET_RESOURCE(event_buffer_event, resource, s_event_bufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data_new = FETCH_RESOURCE(event_buffer_event, EventBufferEventResourceData, s_event_bufferevent);
         event_buffer_event_resource_data_new->isInternal = true;
         return event_buffer_event;
     }
@@ -289,7 +289,7 @@ namespace HPHP {
         evutil_socket_t fd;
         SSL *ssl;
         event_buffer_event_t *bevent;
-        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_eventbase);
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_event_base);
         EventSSLContextResourceData *event_ssl_context_resource_data = FETCH_RESOURCE(ctx, EventSSLContextResourceData, s_event_ssl_context);
 
         if (!is_valid_ssl_state(state)) {
@@ -326,8 +326,8 @@ namespace HPHP {
         Object event_buffer_event = ObjectData::newInstance(Unit::lookupClass(ClassName.get()));
         Resource resource;
         resource = Resource(NEWOBJ(EventBufferEventResourceData(bevent, event_buffer_event.get())));
-        SET_RESOURCE(event_buffer_event, resource, s_eventbufferevent);
-        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(event_buffer_event, EventBufferEventResourceData, s_eventbufferevent);
+        SET_RESOURCE(event_buffer_event, resource, s_event_bufferevent);
+        EventBufferEventResourceData *event_buffer_event_resource_data = FETCH_RESOURCE(event_buffer_event, EventBufferEventResourceData, s_event_bufferevent);
         event_buffer_event_resource_data->isInternal = true;
         return event_buffer_event;
     }

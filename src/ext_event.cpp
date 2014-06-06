@@ -34,7 +34,7 @@ namespace HPHP
         evutil_socket_t fd_r;
         event_t *event;
         Resource resource;
-        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_eventbase);
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_event_base);
         event_base_t *event_base = (event_base_t *)event_base_resource_data->getInternalResourceData();
 
         resource = Resource(NEWOBJ(EventResourceData(NULL, this_.get())));
@@ -129,7 +129,7 @@ namespace HPHP
         event_t *event = (event_t *) event_resource_data->getInternalResourceData();
         evutil_socket_t fd_r;
         event_callback_fn event_cb_fn;
-        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_eventbase);
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_event_base);
         event_base_t *event_base = (event_base_t *)event_base_resource_data->getInternalResourceData();
 
         if(event_is_pending(event)){

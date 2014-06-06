@@ -40,6 +40,10 @@ namespace HPHP
 #ifdef HAVE_LIBEVENT_HTTP_SUPPORT
                 _initEventHttpClass();
                 _initEventHttpRequestClass();
+                _initEventHttpConnectionClass();
+#endif
+#ifdef HAVE_LIBEVENT_DNS_SUPPORT
+                _initEventDNSBaseClass();
 #endif
                 loadSystemlib();
             }
@@ -55,7 +59,11 @@ namespace HPHP
 #endif
 #ifdef HAVE_LIBEVENT_HTTP_SUPPORT
             void _initEventHttpClass();
-              void _initEventHttpRequestClass();
+            void _initEventHttpRequestClass();
+            void _initEventHttpConnectionClass();
+#endif
+#ifdef HAVE_LIBEVENT_DNS_SUPPORT
+            void _initEventDNSBaseClass();
 #endif
     };
 

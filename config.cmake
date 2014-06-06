@@ -30,6 +30,8 @@ HHVM_EXTENSION(event
     src/ext_event_util.cpp
     src/ext_event_http.cpp
     src/ext_event_http_request.cpp
+    src/ext_event_http_connection.cpp
+    src/ext_event_dns_base.cpp
     src/ext_event_ssl_context
 )
 HHVM_SYSTEMLIB(event ext_event.php)

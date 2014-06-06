@@ -28,7 +28,11 @@
     typedef struct evhttp_connection evhttp_connection_t;
     #define EVENT_REQ_HEADER_INPUT 1
     #define EVENT_REQ_HEADER_OUTPUT 2
+#endif
 
+#ifdef HAVE_LIBEVENT_DNS_SUPPORT
+    #include <event2/dns.h>
+    typedef struct evdns_base evdns_base_t;
 #endif
 
 typedef struct event_base event_base_t;

@@ -6,8 +6,8 @@ namespace HPHP {
     ALWAYS_INLINE Object makeEventHttpRequestObject(evhttp_request_t *request) {
         Object http_request = ObjectData::newInstance(Unit::lookupClass(String("EventHttpRequest").get()));
         Resource resource = Resource(NEWOBJ(EventHttpRequestResourceData(http_request.get())));
-        SET_RESOURCE(http_request, resource, s_eventhttprequest);
-        EventHttpRequestResourceData *resource_data = FETCH_RESOURCE(http_request, EventHttpRequestResourceData, s_eventhttprequest);
+        SET_RESOURCE(http_request, resource, s_event_http_request);
+        EventHttpRequestResourceData *resource_data = FETCH_RESOURCE(http_request, EventHttpRequestResourceData, s_event_http_request);
         evhttp_request_own(request);
         resource_data->setInternalResourceData((void *) request);
         resource_data->isInternal = true;
@@ -26,7 +26,7 @@ namespace HPHP {
 
     static void HHVM_METHOD(EventHttp, __construct, const Object &base) {
         evhttp_t *http;
-        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_eventbase);
+        InternalResourceData *event_base_resource_data = FETCH_RESOURCE(base, InternalResourceData, s_event_base);
         event_base_t *event_base = (event_base_t *)event_base_resource_data->getInternalResourceData();
         http = evhttp_new(event_base);
 
@@ -35,12 +35,12 @@ namespace HPHP {
         }
 
         Resource resource = Resource(NEWOBJ(EventHttpResourceData(http)));
-        SET_RESOURCE(this_, resource, s_eventhttp);
+        SET_RESOURCE(this_, resource, s_event_http);
     }
 
     static bool HHVM_METHOD(EventHttp, accept, const Resource &socket) {
         evutil_socket_t fd;
-        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_eventhttp);
+        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_event_http);
         Socket *sock = socket.getTyped<Socket>();
         fd = sock->fd();
 
@@ -54,27 +54,27 @@ namespace HPHP {
     }
 
     static bool HHVM_METHOD(EventHttp, addServerAlias, const String &alias) {
-        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_eventhttp);
+        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_event_http);
         return evhttp_add_server_alias((evhttp_t *)resource_data->getInternalResourceData(), alias.c_str()) == 0;
     }
 
     static bool HHVM_METHOD(EventHttp, bind, const String &address, int64_t port) {
-        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_eventhttp);
+        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_event_http);
         return evhttp_bind_socket((evhttp_t *)resource_data->getInternalResourceData(), address.c_str(), port) == 0;
     }
 
     static bool HHVM_METHOD(EventHttp, removeServerAlias, const String &alias) {
-        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_eventhttp);
+        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_event_http);
         return evhttp_remove_server_alias((evhttp_t *)resource_data->getInternalResourceData(), alias.c_str()) == 0;
     }
 
     static void HHVM_METHOD(EventHttp, setAllowedMethods, int64_t methods) {
-        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_eventhttp);
+        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_event_http);
         evhttp_set_allowed_methods((evhttp_t *)resource_data->getInternalResourceData(), methods);
     }
 
     static void HHVM_METHOD(EventHttp, setCallback, const String &path, const Object &cb, const Variant &arg) {
-        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_eventhttp);        ;
+        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_event_http);        ;
         cb.get()->incRefCount();
         resource_data->setCallback(cb.get());
         resource_data->setCallbackArg(arg);
@@ -82,7 +82,7 @@ namespace HPHP {
     }
 
     static void HHVM_METHOD(EventHttp, setDefaultCallback, const Object &cb, const Variant &arg) {
-        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_eventhttp);
+        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_event_http);
         cb.get()->incRefCount();
         resource_data->setDefaultCallback(cb.get());
         resource_data->setDefaultCallbackArg(arg);
@@ -90,17 +90,17 @@ namespace HPHP {
     }
 
     static void HHVM_METHOD(EventHttp, setMaxBodySize, int64_t value) {
-        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_eventhttp);
+        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_event_http);
         evhttp_set_max_body_size((evhttp_t *)resource_data->getInternalResourceData(), value);
     }
 
     static void HHVM_METHOD(EventHttp, setMaxHeadersSize, int64_t value) {
-        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_eventhttp);
+        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_event_http);
         evhttp_set_max_headers_size((evhttp_t *)resource_data->getInternalResourceData(), value);
     }
 
     static void HHVM_METHOD(EventHttp, setTimeout, int64_t value) {
-        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_eventhttp);
+        EventHttpResourceData *resource_data = FETCH_RESOURCE(this_, EventHttpResourceData, s_event_http);
         evhttp_set_timeout((evhttp_t *)resource_data->getInternalResourceData(), value);
     }
 
